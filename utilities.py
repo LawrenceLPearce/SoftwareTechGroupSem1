@@ -5,12 +5,17 @@ import pygame
 pygame.init()
 FONT = pygame.font.SysFont(None, 36)
 
+
+############################ COLOURS #########################
+# Add any colours here so that if we change anything, it will apply everywhere.
+# Also, import colours from here so that it all stays consistent
 BACKGROUND_COLOUR = pygame.Color("#F5F0EB")
-TEXT_COLOR = pygame.Color("Black")
+TEXT_COLOUR = pygame.Color("Black")
 SECONDARY_COLOUR = pygame.Color("#7EC8A4")
+############################################################
 
 def draw_text(text, pos, screen):
-    txt = FONT.render(text, True, TEXT_COLOR)
+    txt = FONT.render(text, True, TEXT_COLOUR)
     screen.blit(txt, pos)
 
 def draw_button_shadow(rect, screen, radius=10, offset=3):
