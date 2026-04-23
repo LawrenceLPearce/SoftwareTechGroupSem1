@@ -163,6 +163,8 @@ def run_bst_menu(screen: pygame.Surface, clock: pygame.time.Clock):
     running = True
     current_module = None
     buttons = bst_menu(screen)
+    entry_rect = pygame.Rect(50, 700, 500, 70)
+    heading_rect = pygame.Rect(50, 645, 500, 50)
 
     while running:
         for event in pygame.event.get():
@@ -181,13 +183,13 @@ def run_bst_menu(screen: pygame.Surface, clock: pygame.time.Clock):
         else:
             if current_module == 'Add Node':
                 utilities.handle_button_click("Add Node", buttons, screen)
-
+                utilities.text_entry(screen, entry_rect, heading_rect)
             elif current_module == 'Delete Node':
                 utilities.handle_button_click("Delete Node", buttons, screen)
-
+                utilities.text_entry(screen, entry_rect, heading_rect)
             elif current_module == 'Search':
                 utilities.handle_button_click("Search", buttons, screen)
-
+                utilities.text_entry(screen, entry_rect, heading_rect)
             elif current_module == 'Back to Menu':
                 utilities.handle_button_click("Back to Menu", buttons, screen)
                 running = False

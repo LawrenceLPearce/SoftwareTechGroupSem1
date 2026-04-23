@@ -26,6 +26,18 @@ def draw_text(text, pos, screen):
     txt = FONT.render(text, True, TEXT_COLOUR)
     screen.blit(txt, pos)
 
+def draw_text_in_rect(text, rect, screen):
+    txt = FONT.render(text, True, TEXT_COLOUR)
+    txt_rect = txt.get_rect(center=rect.center)
+    screen.blit(txt, txt_rect)
+
+def draw_offset_rect(outer_rect, screen, offset=8, outer_colour=SECONDARY_COLOUR, inner_colour=BACKGROUND_COLOUR):
+    pygame.draw.rect(screen, outer_colour, outer_rect, border_radius=10)
+    # inner
+    inner_rect = outer_rect.inflate(-offset, -offset)
+    pygame.draw.rect(screen, inner_colour, inner_rect, border_radius=10)
+
+
 
 def draw_button_shadow(rect, screen, radius=10, offset=3):
     """ DO NOT USE OUTSIDE OF utilities.py
@@ -102,15 +114,44 @@ def draw_node_connects():
     pass
 
 
-def text_entry(screen: pygame.Surface, rect: pygame.Rect,
+def text_entry(screen: pygame.Surface, entry_rect: pygame.Rect, heading_rect: pygame.Rect,
                heading: str = "Type text then pres ENTER (ESC to exit)") -> str | None:
-
     # draw shadow over whole screen
-    # draw rect
+    shadow_surf = pygame.Surface((screen.get_width(), screen.get_height()), pygame.SRCALPHA)
+    pygame.draw.rect(shadow_surf, (0, 0, 0, 90),
+                     pygame.Rect(0, 0, screen.get_width(), screen.get_height()))
+    screen.blit(shadow_surf, (0, 0))
+
+
+    # draw both rects
+    for rect in [entry_rect, heading_rect]:
+        draw_offset_rect(rect, screen)
+
+    # draw heading text
+    draw_text_in_rect(heading, heading_rect, screen)
+
+    pygame.display.flip()
     # heading within rect
     # get key presses
-    # special keys: enter, esc, backspace
-    # append key to press, redraw rect + text
-    # return new string
 
-    return "placeholder" + str(random.randint(1, 100000))
+    text = ''
+    running = True
+    while running:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_ESCAPE:
+                    return None
+                if event.key == pygame.K_KP_ENTER or event.key == pygame.K_RETURN:
+                    running = False
+                    break
+                if event.key == pygame.K_BACKSPACE:
+                    text = text[:-1]
+                else:
+                    text += event.unicode
+                draw_offset_rect(entry_rect, screen)
+                draw_text_in_rect(text, entry_rect, screen)
+                pygame.display.flip()
+
+    return text
