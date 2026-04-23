@@ -6,7 +6,7 @@ import utilities
 
 def dsp_menu(screen: pygame.Surface):
     utilities.fill_screen(screen)
-    utilities.draw_text("Algorithm Explorer", (screen.get_width() // 3, 50), screen)
+    utilities.draw_text("Data Structure Playground", ((screen.get_width() // 4) + 30, 50), screen)
     buttons = {
         'Stack Interaction': pygame.Rect(260, 150, 250, 50),
         'Queue Interaction': pygame.Rect(260, 230, 250, 50),
@@ -57,14 +57,19 @@ def run_dsp_menu(screen: pygame.Surface, clock: pygame.time.Clock):
             buttons = dsp_menu(screen)
         else:
             if current_module == 'Stack Interaction':
+                utilities.handle_button_click("Stack Interaction", buttons, screen)
                 stack_visual(screen, clock)
             elif current_module == 'Queue Interaction':
+                utilities.handle_button_click("Queue Interaction", buttons, screen)
                 queue_visual(screen, clock)
             elif current_module == 'Linked List Editor':
+                utilities.handle_button_click("Linked List Editor", buttons, screen)
                 linked_list_visual(screen, clock)
             elif current_module == 'Binary Search Tree':
+                utilities.handle_button_click("Binary Search Tree", buttons, screen)
                 binary_tree_visual(screen, clock)
             elif current_module == 'Back to main menu':
+                utilities.handle_button_click("Back to main menu", buttons, screen)
                 running = False
 
             # For demo, after module ends return to menu

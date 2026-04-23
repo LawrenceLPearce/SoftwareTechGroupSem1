@@ -73,14 +73,19 @@ def main():
             buttons = main_menu()
         else:
             if current_module == 'Data Structures':
+                utilities.handle_button_click("Data Structures", buttons, screen)
                 data_structures_module()
             elif current_module == 'Sorting':
+                utilities.handle_button_click("Sorting", buttons, screen)
                 sorting_module()
             elif current_module == 'Graphs':
+                utilities.handle_button_click("Graphs", buttons, screen)
                 graphs_module()
             elif current_module == 'Heap':
+                utilities.handle_button_click("Heap", buttons, screen)
                 heap_module()
             elif current_module == 'Puzzles':
+                utilities.handle_button_click("Puzzles", buttons, screen)
                 puzzles_module()
 
             # For demo, after module ends return to menu
