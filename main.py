@@ -4,7 +4,8 @@ import utilities
 import dsp_playground
 pygame.init()
 
-WIDTH, HEIGHT = 800, 600
+WIDTH, HEIGHT = 1000, 800
+#todo: verify its ok to change the width and height
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 FONT = pygame.font.SysFont(None, 36)
 clock = pygame.time.Clock()
@@ -14,14 +15,16 @@ clock = pygame.time.Clock()
 
 
 def main_menu():
+    left_lineup = WIDTH // 2 - 100
+
     utilities.fill_screen(screen)
-    utilities.draw_text("Algorithm Explorer", (WIDTH // 3, 50), screen)
+    utilities.draw_text("Algorithm Explorer", (left_lineup, 50), screen)
     buttons = {
-        'Data Structures': pygame.Rect(270, 150, 220, 50),
-        'Sorting':         pygame.Rect(270, 230, 220, 50),
-        'Graphs':          pygame.Rect(270, 310, 220, 50),
-        'Heap':            pygame.Rect(270, 390, 220, 50),
-        'Puzzles':         pygame.Rect(270, 470, 220, 50),
+        'Data Structures': pygame.Rect(left_lineup, 150, 220, 50),
+        'Sorting':         pygame.Rect(left_lineup, 230, 220, 50),
+        'Graphs':          pygame.Rect(left_lineup, 310, 220, 50),
+        'Heap':            pygame.Rect(left_lineup, 390, 220, 50),
+        'Puzzles':         pygame.Rect(left_lineup, 470, 220, 50),
     }
     utilities.draw_buttons(buttons, screen)
     pygame.display.flip()

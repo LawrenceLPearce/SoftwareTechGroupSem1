@@ -62,10 +62,26 @@ def handle_button_click(button_text, buttons, screen):
         for event in pygame.event.get():
             if event.type == pygame.MOUSEBUTTONUP:
                 return
-            elif event.type == pygame.QUIT:
-                pygame.quit()
-                return
+
 
 def fill_screen(screen):
     screen.fill(pygame.Color(BACKGROUND_COLOUR))
 
+def draw_node(rect, text, screen, color=SECONDARY_COLOUR, text_color=TEXT_COLOUR, radius=10):
+    # Shadow
+    shadow_surf = pygame.Surface((rect.width + 3, rect.height + 3), pygame.SRCALPHA)
+    pygame.draw.rect(shadow_surf, (0, 0, 0, 40),
+                     pygame.Rect(3, 3, rect.width, rect.height),
+                     border_radius=radius)
+    screen.blit(shadow_surf, (rect.x, rect.y))
+
+    # Body
+    pygame.draw.rect(screen, color, rect, border_radius=radius)
+
+    # Centered text
+    txt = FONT.render(text, True, text_color)
+    txt_rect = txt.get_rect(center=rect.center)
+    screen.blit(txt, txt_rect)
+
+def draw_node_connects():
+    pass

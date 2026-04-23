@@ -2,17 +2,20 @@
 
 import pygame
 import utilities
+import binary_search_tree
 
 
 def dsp_menu(screen: pygame.Surface):
+    left_lineup = screen.get_width() // 2 - 100
+
     utilities.fill_screen(screen)
-    utilities.draw_text("Data Structure Playground", ((screen.get_width() // 4) + 30, 50), screen)
+    utilities.draw_text("Data Structure Playground", (left_lineup, 50), screen)
     buttons = {
-        'Stack Interaction': pygame.Rect(260, 150, 250, 50),
-        'Queue Interaction': pygame.Rect(260, 230, 250, 50),
-        'Linked List Editor': pygame.Rect(260, 310, 250, 50),
-        'Binary Search Tree': pygame.Rect(260, 390, 250, 50),
-        'Back to main menu': pygame.Rect(260, 470, 250, 50),
+        'Stack Interaction': pygame.Rect(left_lineup, 150, 250, 50),
+        'Queue Interaction': pygame.Rect(left_lineup, 230, 250, 50),
+        'Linked List Editor': pygame.Rect(left_lineup, 310, 250, 50),
+        'Binary Search Tree': pygame.Rect(left_lineup, 390, 250, 50),
+        'Back to main menu': pygame.Rect(left_lineup, 470, 250, 50),
     }
     utilities.draw_buttons(buttons, screen)
     pygame.display.flip()
@@ -33,7 +36,7 @@ def linked_list_visual(screen: pygame.Surface, clock: pygame.time.Clock):
 
 
 def binary_tree_visual(screen: pygame.Surface, clock: pygame.time.Clock):
-    pass
+    binary_search_tree.run_bst_menu(screen, clock)
 
 
 def run_dsp_menu(screen: pygame.Surface, clock: pygame.time.Clock):
