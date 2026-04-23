@@ -1,6 +1,8 @@
 import pygame
 import sys
 
+# comment
+
 pygame.init()
 
 WIDTH, HEIGHT = 800, 600
