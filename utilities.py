@@ -1,10 +1,14 @@
 """This file is for any functions that are used in multiple locations, such as draw text.
 
+There exists:
+    - Several button functions: Drawing buttons, drawing pressed buttons, handling button presses
+    - Text entry handler that returns string todo: implement lol
+
 This file also controls the theme and style. So call everything from here to keep consistent style"""
 import pygame
+import random
 pygame.init()
 FONT = pygame.font.SysFont(None, 36)
-
 
 ############################ COLOURS #########################
 # Add any colours here so that if we change anything, it will apply everywhere.
@@ -14,11 +18,14 @@ TEXT_COLOUR = pygame.Color("Black")
 
 SECONDARY_COLOUR = pygame.Color("#7EC8A4")
 SECONDARY_COLOUR_SHADOW = pygame.Color("#6DB893")
+
+
 ############################################################
 
 def draw_text(text, pos, screen):
     txt = FONT.render(text, True, TEXT_COLOUR)
     screen.blit(txt, pos)
+
 
 def draw_button_shadow(rect, screen, radius=10, offset=3):
     """ DO NOT USE OUTSIDE OF utilities.py
@@ -30,7 +37,9 @@ def draw_button_shadow(rect, screen, radius=10, offset=3):
     pygame.draw.rect(shadow_surf, (0, 0, 0, 50), shadow_surf.get_rect(), border_radius=radius)
     screen.blit(shadow_surf, (shadow_rect.x, shadow_rect.y))
 
+
 def draw_button_pressed(rect, screen, radius=10, offset=3):
+    """Makes a button look like it is pressed by adding an internal shadow."""
 
     # put shadow in top left to make it look indented
     shadow_surf = pygame.Surface((rect.width, rect.height), pygame.SRCALPHA)
@@ -42,15 +51,19 @@ def draw_button_pressed(rect, screen, radius=10, offset=3):
                      border_radius=radius)
     screen.blit(shadow_surf, (rect.x, rect.y))
 
+
 def draw_buttons(buttons, screen):
-    """Function that adds buttons to the screen. Call after filling screen. """
+    """Function that adds buttons to the screen. Call after filling screen.
+    buttons: Dict {'text', pygame.Rect(coordinates etc)}"""
     for text, rect in buttons.items():
         draw_button_shadow(rect, screen)
         pygame.draw.rect(screen, pygame.Color(SECONDARY_COLOUR), rect, border_radius=10)
         draw_text(text, (rect.x + 20, rect.y + 10), screen)
 
+
 def handle_button_click(button_text, buttons, screen):
-    rect = buttons[button_text] # get correct button
+    """draws the button with shadows until the mouse is released (unclicked)."""
+    rect = buttons[button_text]  # get correct button
 
     # draw pressed button
     draw_button_pressed(rect, screen)
@@ -66,6 +79,7 @@ def handle_button_click(button_text, buttons, screen):
 
 def fill_screen(screen):
     screen.fill(pygame.Color(BACKGROUND_COLOUR))
+
 
 def draw_node(rect, text, screen, color=SECONDARY_COLOUR, text_color=TEXT_COLOUR, radius=10):
     # Shadow
@@ -83,5 +97,20 @@ def draw_node(rect, text, screen, color=SECONDARY_COLOUR, text_color=TEXT_COLOUR
     txt_rect = txt.get_rect(center=rect.center)
     screen.blit(txt, txt_rect)
 
+
 def draw_node_connects():
     pass
+
+
+def text_entry(screen: pygame.Surface, rect: pygame.Rect,
+               heading: str = "Type text then pres ENTER (ESC to exit)") -> str | None:
+
+    # draw shadow over whole screen
+    # draw rect
+    # heading within rect
+    # get key presses
+    # special keys: enter, esc, backspace
+    # append key to press, redraw rect + text
+    # return new string
+
+    return "placeholder" + str(random.randint(1, 100000))
