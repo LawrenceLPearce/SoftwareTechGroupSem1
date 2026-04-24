@@ -2,7 +2,8 @@
 
 import pygame
 import utilities
-import BST_visualiser
+import binary_search_tree
+import linked_list_editor
 
 
 def dsp_menu(screen: pygame.Surface):
@@ -32,11 +33,11 @@ def queue_visual(screen: pygame.Surface, clock: pygame.time.Clock):
 
 
 def linked_list_visual(screen: pygame.Surface, clock: pygame.time.Clock):
-    pass
+    linked_list_editor.run_linked_list_editor(screen,  clock)
 
 
 def binary_tree_visual(screen: pygame.Surface, clock: pygame.time.Clock):
-    BST_visualiser.run_bst_menu(screen, clock)
+    binary_search_tree.run_bst_menu(screen, clock)
 
 
 def run_dsp_menu(screen: pygame.Surface, clock: pygame.time.Clock):
