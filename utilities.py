@@ -16,22 +16,48 @@ FONT = pygame.font.SysFont(None, 36)
 BACKGROUND_COLOUR = pygame.Color("#F5F0EB")
 TEXT_COLOUR = pygame.Color("Black")
 
-SECONDARY_COLOUR = pygame.Color("#7EC8A4")
+SECONDARY_COLOUR = pygame.Color("#7EC8A4") # also used for buttons
 SECONDARY_COLOUR_SHADOW = pygame.Color("#6DB893")
 
+NODE_COLOUR = pygame.Color("#53ffdd")
+NODE_EDGE_COLOUR = pygame.Color("#53ffdd")
 
+HIGHLIGHT_COLOUR = pygame.Color("#ffd869")
 ############################################################
 
 def draw_text(text, pos, screen):
+    """
+    draw text at given location
+    :param text: text to be written
+    :param pos: x, y
+    :param screen: pygame.Surface
+    :return: None
+    """
     txt = FONT.render(text, True, TEXT_COLOUR)
     screen.blit(txt, pos)
 
 def draw_text_in_rect(text, rect, screen):
+    """
+    centers text within given rect
+    :param text: text to be written
+    :param rect: pygame.Rect
+    :param screen: pygame.Surface
+    :return: None
+    """
     txt = FONT.render(text, True, TEXT_COLOUR)
     txt_rect = txt.get_rect(center=rect.center)
     screen.blit(txt, txt_rect)
 
 def draw_offset_rect(outer_rect, screen, offset=8, outer_colour=SECONDARY_COLOUR, inner_colour=BACKGROUND_COLOUR):
+    """
+    draws a smaller rect of different colour inside the given rect
+    :param outer_rect: pygame.Rect object
+    :param screen: pygame.Surface
+    :param offset: (optional) the total offset for inner triangle (gets divided in 2 for each side)
+    :param outer_colour: (optional) colour of the outer rectangle
+    :param inner_colour: (optional) colour of the inner rectangle
+    :return: None
+    """
     pygame.draw.rect(screen, outer_colour, outer_rect, border_radius=10)
     # inner
     inner_rect = outer_rect.inflate(-offset, -offset)
@@ -51,7 +77,14 @@ def draw_button_shadow(rect, screen, radius=10, offset=3):
 
 
 def draw_button_pressed(rect, screen, radius=10, offset=3):
-    """Makes a button look like it is pressed by adding an internal shadow."""
+    """
+    Makes a button look like it is pressed by adding an internal shadow.
+    :param rect: button rect
+    :param screen: screen
+    :param radius: (optional) corner radius
+    :param offset: (optional) shadow offset
+    :return:
+    """
 
     # put shadow in top left to make it look indented
     shadow_surf = pygame.Surface((rect.width, rect.height), pygame.SRCALPHA)
@@ -65,8 +98,12 @@ def draw_button_pressed(rect, screen, radius=10, offset=3):
 
 
 def draw_buttons(buttons, screen):
-    """Function that adds buttons to the screen. Call after filling screen.
-    buttons: Dict {'text', pygame.Rect(coordinates etc)}"""
+    """
+    function that adds buttons to the screen. Call after filling screen.
+    :param buttons: Dict {'text', pygame.Rect(coordinates etc)}
+    :param screen: pygame.screen
+    :return: None
+    """
     for text, rect in buttons.items():
         draw_button_shadow(rect, screen)
         pygame.draw.rect(screen, pygame.Color(SECONDARY_COLOUR), rect, border_radius=10)
@@ -74,7 +111,13 @@ def draw_buttons(buttons, screen):
 
 
 def handle_button_click(button_text, buttons, screen):
-    """draws the button with shadows until the mouse is released (unclicked)."""
+    """
+    Waits until mouse is released. Draws button in inverted mode to make it look like it is inverted
+    :param button_text: button key
+    :param buttons: Dict of buttons
+    :param screen: pygame.screen
+    :return: None
+    """
     rect = buttons[button_text]  # get correct button
 
     # draw pressed button
@@ -94,6 +137,17 @@ def fill_screen(screen):
 
 
 def draw_node(rect, text, screen, color=SECONDARY_COLOUR, text_color=TEXT_COLOUR, radius=10):
+    """
+    Function to draw a node. Will be moved to bst if only used there.
+    :param rect: Node rectangle
+    :param text: text to display within node
+    :param screen: screen
+    :param color: (optional): colour of node
+    :param text_color: (optional): colour of text
+    :param radius: (optional): radius of coners
+    :return: None
+    """
+
     # Shadow
     shadow_surf = pygame.Surface((rect.width + 3, rect.height + 3), pygame.SRCALPHA)
     pygame.draw.rect(shadow_surf, (0, 0, 0, 40),
@@ -115,7 +169,22 @@ def draw_node_connects():
 
 
 def text_entry(screen: pygame.Surface, entry_rect: pygame.Rect, heading_rect: pygame.Rect,
-               heading: str = "Type text then pres ENTER (ESC to exit)") -> str | None:
+               heading: str = None, integer_only = False) -> str | None :
+    """
+    provides a text box for text entry.
+    :param screen: pygame.screen
+    :param entry_rect: pygame.Rect for where the text will be displayed
+    :param heading_rect: pygame.Rect for where instructions are displayed
+    :param heading: (optional) str of what to write in heading
+    :param integer_only: (optional) bool whether to only accept number input
+    :return: str | None
+    """
+    if heading is None:
+        if integer_only:
+            heading = "Type NUMBER only then press ENTER (ESC to exit)"
+        else:
+            heading = "Type text then press ENTER (ESC to exit)"
+
     # draw shadow over whole screen
     shadow_surf = pygame.Surface((screen.get_width(), screen.get_height()), pygame.SRCALPHA)
     pygame.draw.rect(shadow_surf, (0, 0, 0, 90),
@@ -148,7 +217,7 @@ def text_entry(screen: pygame.Surface, entry_rect: pygame.Rect, heading_rect: py
                     break
                 if event.key == pygame.K_BACKSPACE:
                     text = text[:-1]
-                else:
+                elif not integer_only or event.unicode.isdigit(): # check that the input is valid
                     text += event.unicode
                 draw_offset_rect(entry_rect, screen)
                 draw_text_in_rect(text, entry_rect, screen)

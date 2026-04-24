@@ -1,5 +1,4 @@
-import pygame
-import utilities
+from collections import deque
 
 """Node and BST classes are based on code pulled from Week8"""
 #TODO: reference
@@ -11,6 +10,8 @@ class Node:
         self.val = key
         self.left = None
         self.right = None
+
+        self.highlight = False
 
 class BST:
     """Binary Search Tree class implementing insert, search, delete, and traversal methods."""
@@ -44,7 +45,9 @@ class BST:
 
     def _inorder_recursive(self, root):
         """Helper method for recursive inorder traversal."""
+
         if root:
+
             self._inorder_recursive(root.left)
             print(root.val, end=" ")
             self._inorder_recursive(root.right)
@@ -83,6 +86,9 @@ class BST:
             return False
         if root.val == key:
             return True
+        root.highlight = True
+        # add delay here / draw
+        root.highlight = False
         if key < root.val:
             return self._search_recursive(root.left, key)
         return self._search_recursive(root.right, key)
@@ -124,6 +130,25 @@ class BST:
             current = current.left
         return current
 
+    def level_info(self):
+        """Helper function to return the number of nodes in each level"""
+        if not self.root:
+            return []
+
+        result = []
+        queue = deque([self.root])
+
+        while queue:
+            level_size = len(queue)  # snapshot: all nodes on this level
+            result.append(level_size)
+
+            for _ in range(level_size):
+                node = queue.popleft()
+                if node.left:  queue.append(node.left)
+                if node.right: queue.append(node.right)
+
+        return result
+
     def display_tree(self, root=None, level=0, prefix="Root: "):
         """Display tree structure visually in console."""
         if root is None:
@@ -140,66 +165,8 @@ class BST:
                 else:
                     print(" " * ((level + 1) * 4) + "R-- None")
 
-#TODO: Instruction Area
-#TODO: Add node button + text enter
-#TODO: Delete node button + text area
-# TODO: Display tree edit
-# TODO: SEARCH Highlight
 
-def bst_menu(screen: pygame.Surface):
-    utilities.fill_screen(screen)
-    utilities.draw_text("Binary Search Tree", ((screen.get_width() // 4) + 30, 30), screen)
-    buttons = {
-        'Add Node':     pygame.Rect(50, 150, 190, 50),
-        'Delete Node':  pygame.Rect(50, 230, 190, 50),
-        'Search':       pygame.Rect(50, 310, 190, 50),
-        'Back to Menu': pygame.Rect(50, 390, 190, 50),
-    }
-    utilities.draw_buttons(buttons, screen)
-    pygame.display.flip()
-    return buttons
 
-def run_bst_menu(screen: pygame.Surface, clock: pygame.time.Clock):
-    running = True
-    current_module = None
-    buttons = bst_menu(screen)
-    entry_rect = pygame.Rect(50, 700, 500, 70)
-    heading_rect = pygame.Rect(50, 645, 500, 50)
-
-    while running:
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                pygame.quit()
-            elif event.type == pygame.MOUSEBUTTONDOWN and current_module is None:
-                pos = event.pos
-                for name, rect in buttons.items():
-                    if rect.collidepoint(pos):
-                        current_module = name
-
-        if current_module is None:
-            buttons = bst_menu(screen)
-        if current_module is None:
-            buttons = bst_menu(screen)
-        else:
-            if current_module == 'Add Node':
-                utilities.handle_button_click("Add Node", buttons, screen)
-                utilities.text_entry(screen, entry_rect, heading_rect)
-            elif current_module == 'Delete Node':
-                utilities.handle_button_click("Delete Node", buttons, screen)
-                utilities.text_entry(screen, entry_rect, heading_rect)
-            elif current_module == 'Search':
-                utilities.handle_button_click("Search", buttons, screen)
-                utilities.text_entry(screen, entry_rect, heading_rect)
-            elif current_module == 'Back to Menu':
-                utilities.handle_button_click("Back to Menu", buttons, screen)
-                running = False
-
-            # For demo, after module ends return to menu
-            current_module = None
-
-        clock.tick(30)
-
-    return
 
 
 if __name__ == '__main__':
