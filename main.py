@@ -4,7 +4,7 @@ import utilities
 import dsp_playground
 pygame.init()
 
-WIDTH, HEIGHT = 1000, 800
+WIDTH, HEIGHT = 900, 600
 #todo: verify its ok to change the width and height
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 FONT = pygame.font.SysFont(None, 36)

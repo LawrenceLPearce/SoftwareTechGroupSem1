@@ -78,8 +78,9 @@ def run_bst_menu(screen: pygame.Surface, clock: pygame.time.Clock):
     running = True
     current_module = None
     buttons = bst_menu(screen)
-    entry_rect = pygame.Rect(50, 700, 610, 70)
-    heading_rect = pygame.Rect(50, 645, 610, 50)
+
+    entry_rect = pygame.Rect(50, 500, 610, 70)
+    heading_rect = pygame.Rect(50, 445, 610, 50)
 
 
 
