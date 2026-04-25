@@ -66,7 +66,9 @@ def draw_linked_list(screen: pygame.Surface, linked_list: LinkedList) -> None:
         )
 
         if previous_node:
-            utilities.draw_node_connects(screen, previous_node, current_node, directed=True)
+            utilities.draw_node_connects(
+                screen, previous_node, current_node, directed=True
+            )
 
         current = current.next
         previous_node = current_node
@@ -117,6 +119,10 @@ def run_linked_list_editor(screen: pygame.Surface, clock: pygame.time.Clock):
         elif command == "Delete":
             utilities.handle_button_click("Delete", buttons, screen)
             delete_node(screen, entry_rect, heading_rect, linked_list)
+
+        elif command == "Reverse":
+            utilities.handle_button_click("Reverse", buttons, screen)
+            linked_list.reverse()
 
         elif command == "Back":
             utilities.handle_button_click("Back", buttons, screen)
