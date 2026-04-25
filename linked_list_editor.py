@@ -4,7 +4,7 @@ from linked_list import LinkedList
 
 NODE_WIDTH = 90
 NODE_HEIGHT = 50
-NODE_SPACING = NODE_WIDTH + 50
+NODE_SPACING = NODE_WIDTH + 70
 
 
 def insert_node(
@@ -77,12 +77,12 @@ def draw_linked_list(screen: pygame.Surface, linked_list: LinkedList) -> None:
     
 def linked_list_editor(screen: pygame.Surface, linked_list: LinkedList):
     utilities.fill_screen(screen)
-    utilities.draw_text("Linked List Editor", ((screen.get_width() // 4) + 30, 50), screen)
+    utilities.draw_text("Linked List Editor", ((screen.get_width() // 4) + 120, 50), screen)
     buttons = {
-        'Insert': pygame.Rect(20, 500, 150, 50),
-        'Delete': pygame.Rect(190, 500, 150, 50),
-        'Reverse': pygame.Rect(360, 500, 150, 50),
-        'Back': pygame.Rect(530, 500, 150, 50)
+        'Insert': pygame.Rect(120, 500, 150, 50),
+        'Delete': pygame.Rect(290, 500, 150, 50),
+        'Reverse': pygame.Rect(460, 500, 150, 50),
+        'Back': pygame.Rect(630, 500, 150, 50)
         }
     utilities.draw_buttons(buttons, screen)
     draw_linked_list(screen, linked_list)
@@ -95,8 +95,8 @@ def run_linked_list_editor(screen: pygame.Surface, clock: pygame.time.Clock):
     running = True
     buttons = linked_list_editor(screen, linked_list)
     command = None
-    entry_rect = pygame.Rect(50, 500, 520, 70)
-    heading_rect = pygame.Rect(50, 400, 520, 50)
+    entry_rect = pygame.Rect(190, 150, 520, 70)
+    heading_rect = pygame.Rect(190, 250, 520, 50)
 
     while running:
         for event in pygame.event.get():
@@ -131,5 +131,3 @@ def run_linked_list_editor(screen: pygame.Surface, clock: pygame.time.Clock):
         command = None
 
         clock.tick(30)
-
-    return
