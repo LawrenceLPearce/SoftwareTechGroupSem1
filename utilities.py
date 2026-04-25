@@ -17,6 +17,8 @@ FONT = pygame.font.SysFont(None, 36)
 BACKGROUND_COLOUR = pygame.Color("#F5F0EB")
 TEXT_COLOUR = pygame.Color("Black")
 
+ERROR_COLOUR = pygame.Color("#C44A4A") # For error messages
+
 SECONDARY_COLOUR = pygame.Color("#7EC8A4") # also used for buttons
 SECONDARY_COLOUR_SHADOW = pygame.Color("#6DB893")
 
@@ -48,6 +50,7 @@ def draw_text_in_rect(text, rect, screen):
     txt = FONT.render(text, True, TEXT_COLOUR)
     txt_rect = txt.get_rect(center=rect.center)
     screen.blit(txt, txt_rect)
+
 
 def draw_offset_rect(outer_rect, screen, offset=8, outer_colour=SECONDARY_COLOUR, inner_colour=BACKGROUND_COLOUR):
     """
@@ -265,3 +268,45 @@ def text_entry(screen: pygame.Surface, entry_rect: pygame.Rect, heading_rect: py
                 pygame.display.flip()
 
     return text
+
+    
+def pop_up_message(
+        screen: pygame.Surface, message: str, duration: int = 1000,
+        information = False, error = False
+    ) -> None:
+    """
+    Draws a rectangle with a text message that dissapears after millisecond 
+    duration. Uses different styles if communicating error or information.
+    """
+    def draw_pop_up():
+        # Place pop up in center of screen
+        outer_rect = pygame.Rect(0, 0, width + padding, height + padding)
+        screen_center = screen.get_rect().center
+        outer_rect.center = screen_center[0], screen_center[1] - 250
+
+        draw_offset_rect(outer_rect, screen, outer_colour=outer_colour, inner_colour=inner_colour)
+
+        draw_text_in_rect(message, outer_rect, screen)
+
+        pygame.display.flip()
+
+    padding = 30
+    width, height = FONT.size(message)
+
+    outer_colour = ERROR_COLOUR if error else SECONDARY_COLOUR
+    inner_colour = pygame.Color("white")
+
+    start_time = pygame.time.get_ticks()
+
+    while True:
+        current_time = pygame.time.get_ticks()
+
+        if current_time - start_time > duration:
+            break
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                return
+
+        draw_pop_up()

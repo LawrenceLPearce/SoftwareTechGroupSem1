@@ -2,6 +2,7 @@ import pygame
 import utilities
 from linked_list import LinkedList
 
+
 NODE_WIDTH = 90
 NODE_HEIGHT = 50
 NODE_SPACING = NODE_WIDTH + 70
@@ -30,7 +31,7 @@ def insert_node(
     success = linked_list.insert(int(value), int(index))
 
     if not success:
-        print("Index out of range")
+        utilities.pop_up_message(screen, "Index out of range", error=True)
 
 
 def delete_node(
@@ -48,7 +49,7 @@ def delete_node(
     success = linked_list.delete(int(value))
 
     if not success:
-        print("Value not found")
+        utilities.pop_up_message(screen, "Value not found", error=True)
 
 
 def draw_linked_list(screen: pygame.Surface, linked_list: LinkedList) -> None:
@@ -122,6 +123,8 @@ def run_linked_list_editor(screen: pygame.Surface, clock: pygame.time.Clock):
 
         elif command == "Reverse":
             utilities.handle_button_click("Reverse", buttons, screen)
+            if not linked_list.head:
+                utilities.pop_up_message(screen, "Insert nodes before reversing")
             linked_list.reverse()
 
         elif command == "Back":
