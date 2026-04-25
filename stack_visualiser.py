@@ -1,5 +1,5 @@
-# visualiser for the stack demonstration. may touch up the visuals to show the top and bottom more clearly if I have time
-
+# visualiser for the stack demonstration. may touch up the visuals to show the top and bottom more clearly if I have time. Tired to make it match the visuals with the menus.
+# some code taken from Task 1.3 in Week 10 tutorial sheet (mainly loops, stack blocks, event handling). removed key controls and just made it clickable buttons
 import pygame
 import utilities
 from stack import Stack
