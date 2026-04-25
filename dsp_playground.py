@@ -5,6 +5,8 @@ import utilities
 import binary_search_tree
 import linked_list_editor
 import BST_visualiser
+import stack_visualiser
+import queue_visualiser
 
 
 def dsp_menu(screen: pygame.Surface):
