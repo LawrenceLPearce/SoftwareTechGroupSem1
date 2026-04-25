@@ -50,6 +50,7 @@ def run_dsp_menu(screen: pygame.Surface, clock: pygame.time.Clock):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
+                return
             elif event.type == pygame.MOUSEBUTTONDOWN and current_module is None:
                 pos = event.pos
                 for name, rect in buttons.items():

@@ -7,6 +7,7 @@ There exists:
 This file also controls the theme and style. So call everything from here to keep consistent style"""
 import pygame
 import random
+import math
 pygame.init()
 FONT = pygame.font.SysFont(None, 36)
 
@@ -164,8 +165,48 @@ def draw_node(rect, text, screen, color=SECONDARY_COLOUR, text_color=TEXT_COLOUR
     screen.blit(txt, txt_rect)
 
 
-def draw_node_connects():
-    pass
+def draw_node_connects(
+        screen: pygame.Surface, node_1: pygame.Rect, node_2: pygame.Rect, 
+        color = pygame.Color("Black"), directed: bool = False, 
+        arrow_length: int = 8, arrow_width: int = 8
+    ):
+    """
+    draws a connection between two nodes. If directed, draws an arrow 
+    pointing from node 1 to node 2.
+    """
+    line_start = node_1.midright
+    line_end = node_2.midleft
+
+    pygame.draw.line(screen, pygame.Color("Black"), line_start, line_end)
+
+    if not directed:
+        return
+    
+    dx = line_end[0] - line_start[0]
+    dy = line_end[1] - line_start[1]
+    length = math.hypot(dx, dy)
+
+    if length == 0:
+        return  # avoid division by zero
+
+    # unit direction vector
+    ux = dx / length
+    uy = dy / length
+
+    # perpendicular vector
+    px = -uy
+    py = ux
+
+    # move back from the tip to get the base center
+    base_x = line_end[0] - ux * arrow_length
+    base_y = line_end[1] - uy * arrow_length
+
+    # offset sideways to get base corners
+    left = (base_x + px * arrow_width, base_y + py * arrow_width)
+    right = (base_x - px * arrow_width, base_y - py * arrow_width)
+
+    # Draw arrowhead
+    pygame.draw.polygon(screen, color, [line_end, left, right])
 
 
 def text_entry(screen: pygame.Surface, entry_rect: pygame.Rect, heading_rect: pygame.Rect,

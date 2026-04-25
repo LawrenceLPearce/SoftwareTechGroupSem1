@@ -3,7 +3,8 @@ import utilities
 from linked_list import LinkedList
 
 NODE_WIDTH = 90
-NODE_SPACING = NODE_WIDTH + 30
+NODE_HEIGHT = 50
+NODE_SPACING = NODE_WIDTH + 50
 
 
 def insert_node(
@@ -53,15 +54,22 @@ def delete_node(
 def draw_linked_list(screen: pygame.Surface, linked_list: LinkedList) -> None:
     current = linked_list.head
     x_position = 30
+    y_position = 300
+    previous_node = None
 
     while current:
-        node_rect = pygame.Rect(x_position, 300, NODE_WIDTH, 50)
+        current_node = pygame.Rect(x_position, y_position, NODE_WIDTH, 50)
+        
         utilities.draw_node(
-            rect=node_rect, text=str(current.data), 
+            rect=current_node, text=str(current.data), 
             screen=screen
         )
 
+        if previous_node:
+            utilities.draw_node_connects(screen, previous_node, current_node, directed=True)
+
         current = current.next
+        previous_node = current_node
         x_position += NODE_SPACING
     
     
