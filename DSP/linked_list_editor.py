@@ -1,6 +1,6 @@
 import pygame
-import utilities
-from linked_list import LinkedList
+from utils import utilities
+from DSP.linked_list import LinkedList
 
 
 NODE_WIDTH = 90

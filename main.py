@@ -1,7 +1,7 @@
 import pygame
-import sys
-import utilities
-import dsp_playground
+from utils import utilities
+from DSP import dsp_playground
+
 pygame.init()
 
 WIDTH, HEIGHT = 900, 600

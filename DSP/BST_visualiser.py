@@ -1,6 +1,6 @@
-from binary_search_tree import Node, BST
+from DSP.binary_search_tree import BST
 import pygame
-import utilities
+from utils import utilities
 
 ###
 
@@ -147,13 +147,13 @@ def bst_menu(screen: pygame.Surface):
 
 def run_bst_menu(screen: pygame.Surface, clock: pygame.time.Clock):
     bst = BST()
-    bst.insert(50)
-    bst.insert(30)
-    bst.insert(70)
-    bst.insert(20)
-    bst.insert(40)
-    bst.insert(60)
-    bst.insert(80)
+    # bst.insert(50)
+    # bst.insert(30)
+    # bst.insert(70)
+    # bst.insert(20)
+    # bst.insert(40)
+    # bst.insert(60)
+    # bst.insert(80)
     running = True
     current_module = None
     buttons = bst_menu(screen)
@@ -187,13 +187,13 @@ def run_bst_menu(screen: pygame.Surface, clock: pygame.time.Clock):
                     current_highlight = bst.search(node_value)[1][-1]
                 case 'Delete':
                     utilities.handle_button_click("Delete", buttons, screen)
-                    node_value = utilities.text_entry(screen, entry_rect, heading_rect)
+                    node_value = utilities.text_entry(screen, entry_rect, heading_rect, integer_only=True)
 
                     delete_node(bst, node_value, screen)
                     current_highlight = None
                 case 'Search':
                     utilities.handle_button_click("Search", buttons, screen)
-                    node_value = utilities.text_entry(screen, entry_rect, heading_rect)
+                    node_value = utilities.text_entry(screen, entry_rect, heading_rect, integer_only=True)
                     current_highlight = search_node(bst, node_value, screen)
 
                 case 'Back':

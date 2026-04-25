@@ -1,12 +1,9 @@
 """This file is the launcher for all modules in phase 1."""
 
 import pygame
-import utilities
-import binary_search_tree
-import linked_list_editor
-import BST_visualiser
-import stack_visualiser
-import queue_visualiser
+from utils import utilities
+from DSP import linked_list_editor, BST_visualiser, stack_visualiser, queue_visualiser
+
 
 
 def dsp_menu(screen: pygame.Surface):
@@ -38,7 +35,7 @@ def queue_visual(screen: pygame.Surface, clock: pygame.time.Clock):
 
 
 def linked_list_visual(screen: pygame.Surface, clock: pygame.time.Clock):
-    linked_list_editor.run_linked_list_editor(screen,  clock)
+    linked_list_editor.run_linked_list_editor(screen, clock)
 
 
 def binary_tree_visual(screen: pygame.Surface, clock: pygame.time.Clock):

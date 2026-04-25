@@ -1,8 +1,8 @@
 # visualiser for the queue. similar to stack visualiser, may touch up visuals but for now this is the basic setup
 # code inspired by stack_visualiser, also used code from Task 1.3 in the Week 10 tutorial sheet. Adjusted for queue format
 import pygame
-import utilities
-from queue_script import Queue
+from utils import utilities
+from DSP.queue_script import Queue
 
 BLOCK_W = 90
 BLOCK_H = 54
