@@ -8,6 +8,7 @@ This file also controls the theme and style. So call everything from here to kee
 import pygame
 import random
 import math
+
 pygame.init()
 FONT = pygame.font.SysFont(None, 36)
 
@@ -17,15 +18,19 @@ FONT = pygame.font.SysFont(None, 36)
 BACKGROUND_COLOUR = pygame.Color("#F5F0EB")
 TEXT_COLOUR = pygame.Color("Black")
 
-ERROR_COLOUR = pygame.Color("#C44A4A") # For error messages
+ERROR_COLOUR = pygame.Color("#C44A4A")  # For error messages
 
-SECONDARY_COLOUR = pygame.Color("#7EC8A4") # also used for buttons
+SECONDARY_COLOUR = pygame.Color("#7EC8A4")  # also used for buttons
 SECONDARY_COLOUR_SHADOW = pygame.Color("#6DB893")
 
 NODE_COLOUR = pygame.Color("#53ffdd")
 NODE_EDGE_COLOUR = pygame.Color("#53ffdd")
 
 HIGHLIGHT_COLOUR = pygame.Color("#ffd869")
+HIGHLIGHT_FOUND_COLOUR = pygame.Color("#34ff66")
+HIGHLIGHT_DELETE_COLOUR = pygame.Color("#C44A4A")
+
+
 ############################################################
 
 def draw_text(text, pos, screen):
@@ -38,6 +43,7 @@ def draw_text(text, pos, screen):
     """
     txt = FONT.render(text, True, TEXT_COLOUR)
     screen.blit(txt, pos)
+
 
 def draw_text_in_rect(text, rect, screen):
     """
@@ -66,7 +72,6 @@ def draw_offset_rect(outer_rect, screen, offset=8, outer_colour=SECONDARY_COLOUR
     # inner
     inner_rect = outer_rect.inflate(-offset, -offset)
     pygame.draw.rect(screen, inner_colour, inner_rect, border_radius=10)
-
 
 
 def draw_button_shadow(rect, screen, radius=10, offset=3):
@@ -169,22 +174,47 @@ def draw_node(rect, text, screen, color=SECONDARY_COLOUR, text_color=TEXT_COLOUR
 
 
 def draw_node_connects(
-        screen: pygame.Surface, node_1: pygame.Rect, node_2: pygame.Rect, 
-        color = pygame.Color("Black"), directed: bool = False, 
-        arrow_length: int = 8, arrow_width: int = 8
-    ):
+        screen: pygame.Surface, node_1: pygame.Rect, node_2: pygame.Rect,
+        color=pygame.Color("Black"), directed: bool = False,
+        arrow_length: int = 8, arrow_width: int = 8,
+        start_location: str = "right", end_location: str = "left"
+):
     """
     draws a connection between two nodes. If directed, draws an arrow 
     pointing from node 1 to node 2.
     """
-    line_start = node_1.midright
-    line_end = node_2.midleft
+
+    match start_location:
+        case "left":
+            line_start = node_1.midleft
+        case "right":
+            line_start = node_1.midright
+        case "top":
+            line_start = node_1.midtop
+        case "bottom":
+            line_start = node_1.midbottom
+        case _:
+            raise ValueError("start_location is not valid. Please implement or make a valid choice.")
+    match end_location:
+        case "left":
+            line_end = node_2.midleft
+        case "right":
+            line_end = node_2.midright
+        case "top":
+            line_end = node_2.midtop
+        case "bottom":
+            line_end = node_2.midbottom
+        case _:
+            raise ValueError("end_location is not valid. Please implement or make a valid choice.")
+
+
+
 
     pygame.draw.line(screen, pygame.Color("Black"), line_start, line_end)
 
     if not directed:
         return
-    
+
     dx = line_end[0] - line_start[0]
     dy = line_end[1] - line_start[1]
     length = math.hypot(dx, dy)
@@ -213,7 +243,7 @@ def draw_node_connects(
 
 
 def text_entry(screen: pygame.Surface, entry_rect: pygame.Rect, heading_rect: pygame.Rect,
-               heading: str | None = None, integer_only = False) -> str | None :
+               heading: str | None = None, integer_only=False) -> str | None:
     """
     provides a text box for text entry.
     :param screen: pygame.screen
@@ -225,7 +255,7 @@ def text_entry(screen: pygame.Surface, entry_rect: pygame.Rect, heading_rect: py
     """
     if heading is None:
         if integer_only:
-            heading = "Type NUMBER only then press ENTER (ESC to exit)"
+            heading = "Enter numerical value then press ENTER (ESC to exit)"
         else:
             heading = "Type text then press ENTER (ESC to exit)"
 
@@ -234,7 +264,6 @@ def text_entry(screen: pygame.Surface, entry_rect: pygame.Rect, heading_rect: py
     pygame.draw.rect(shadow_surf, (0, 0, 0, 90),
                      pygame.Rect(0, 0, screen.get_width(), screen.get_height()))
     screen.blit(shadow_surf, (0, 0))
-
 
     # draw both rects
     for rect in [entry_rect, heading_rect]:
@@ -261,7 +290,7 @@ def text_entry(screen: pygame.Surface, entry_rect: pygame.Rect, heading_rect: py
                     break
                 if event.key == pygame.K_BACKSPACE:
                     text = text[:-1]
-                elif not integer_only or event.unicode.isdigit(): # check that the input is valid
+                elif not integer_only or event.unicode.isdigit():  # check that the input is valid
                     text += event.unicode
                 draw_offset_rect(entry_rect, screen)
                 draw_text_in_rect(text, entry_rect, screen)
@@ -269,15 +298,16 @@ def text_entry(screen: pygame.Surface, entry_rect: pygame.Rect, heading_rect: py
 
     return text
 
-    
+
 def pop_up_message(
         screen: pygame.Surface, message: str, duration: int = 1000,
-        information = False, error = False
-    ) -> None:
+        information=False, error=False
+) -> None:
     """
     Draws a rectangle with a text message that dissapears after millisecond 
     duration. Uses different styles if communicating error or information.
     """
+
     def draw_pop_up():
         # Place pop up in center of screen
         outer_rect = pygame.Rect(0, 0, width + padding, height + padding)

@@ -77,21 +77,26 @@ class BST:
             print(root.val, end=" ")
 
     def search(self, key):
-        """Search for a key in BST. Returns True if found, False otherwise."""
-        return self._search_recursive(self.root, key)
+        """Search for a key in BST. Returns (True/False, visited path)."""
+        visited = []
+        found = self._search_recursive(self.root, key, visited)
+        return found, visited
 
-    def _search_recursive(self, root, key):
+    def _search_recursive(self, root, key, visited):
         """Helper method for recursive search."""
         if root is None:
             return False
+
+        visited.append(id(root))
+
         if root.val == key:
             return True
         root.highlight = True
         # add delay here / draw
         root.highlight = False
         if key < root.val:
-            return self._search_recursive(root.left, key)
-        return self._search_recursive(root.right, key)
+            return self._search_recursive(root.left, key, visited)
+        return self._search_recursive(root.right, key, visited)
 
     def delete(self, key):
         """Delete a node from BST."""
