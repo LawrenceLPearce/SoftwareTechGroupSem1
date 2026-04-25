@@ -1,3 +1,4 @@
+# the code used here was from the Week 10 tutorial sheet (Task 1.3)
 class Stack:
     def __init__(self):
         self._data = []
