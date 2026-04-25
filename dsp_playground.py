@@ -26,11 +26,13 @@ def dsp_menu(screen: pygame.Surface):
 
 # placeholder functions that will call the separate files
 def stack_visual(screen: pygame.Surface, clock: pygame.time.Clock):
-    pass
+    stack_visualiser.run_stack_visualiser(screen, clock)
+    # ^ added this, will run the stack visualiser - Nathan
 
 
 def queue_visual(screen: pygame.Surface, clock: pygame.time.Clock):
-    pass
+    queue_visualiser.run_queue_visualiser(screen, clock)
+    # ^ added this, will run the queue visualiser - Nathan
 
 
 def linked_list_visual(screen: pygame.Surface, clock: pygame.time.Clock):
