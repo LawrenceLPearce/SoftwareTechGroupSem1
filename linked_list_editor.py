@@ -1,74 +1,92 @@
 import pygame
 import utilities
+from linked_list import LinkedList
+
+NODE_WIDTH = 90
+NODE_SPACING = NODE_WIDTH + 30
 
 
-class Node:
-    def __init__(self, data):
-        self.data = data
-        self.next: Node | None = None
-
-
-class LinkedList:
-    def __init__(self) -> None:
-        self.head: Node | None = None
-    
-    def insert(self, data: int, index: int) -> bool:
-        """
-        Insert node at given index. Return false if index is 
-        out of range.
-        """
-        new_node = Node(data)
-
-        if index == 0:
-            new_node.next = self.head
-            self.head = new_node
-            return True
+def insert_node(
+        screen: pygame.Surface, entry_rect: pygame.Rect, 
+        heading_rect: pygame.Rect, linked_list: LinkedList
+    ) -> None:
+    value = utilities.text_entry(
+        screen, entry_rect, heading_rect, 
+        heading="Enter numerical value then press ENTER", 
+        integer_only=True
+    )
         
-        current = self.head
-        count = 0
-        while current:
-            if count == index - 1:
-                new_node.next = current.next
-                current.next = new_node
-                return True
-            count += 1
-            current = current.next
-        
-        return False
-    
-    def delete(self, value: int) -> bool:
-        """
-        Deletes first node with given value. Returns false if no node 
-        contains value.
-        """
-        current = self.head
-        previous = None
+    if not value: return
 
-        while current:
-            if current.data == value:
-                if previous:
-                    previous.next = current.next
-                else:
-                    self.head = current.next
-                return True
-            previous = current
-            current = current.next
-        return False
+    index = utilities.text_entry(
+        screen, entry_rect, heading_rect, 
+        heading="Enter index then press ENTER", 
+        integer_only=True
+    )
     
+    if not index: return
+    
+    success = linked_list.insert(int(value), int(index))
 
-def linked_list_editor(screen: pygame.Surface):
+    if not success:
+        print("Index out of range")
+
+
+def delete_node(
+        screen: pygame.Surface, entry_rect: pygame.Rect, 
+        heading_rect: pygame.Rect, linked_list: LinkedList
+    ) -> None:
+    value = utilities.text_entry(
+        screen, entry_rect, heading_rect, 
+        heading="Enter value of node you wish to delete", 
+        integer_only=True
+    )
+
+    if not value: return
+
+    success = linked_list.delete(int(value))
+
+    if not success:
+        print("Value not found")
+
+
+def draw_linked_list(screen: pygame.Surface, linked_list: LinkedList) -> None:
+    current = linked_list.head
+    x_position = 30
+
+    while current:
+        node_rect = pygame.Rect(x_position, 300, NODE_WIDTH, 50)
+        utilities.draw_node(
+            rect=node_rect, text=str(current.data), 
+            screen=screen
+        )
+
+        current = current.next
+        x_position += NODE_SPACING
+    
+    
+def linked_list_editor(screen: pygame.Surface, linked_list: LinkedList):
     utilities.fill_screen(screen)
     utilities.draw_text("Linked List Editor", ((screen.get_width() // 4) + 30, 50), screen)
-    buttons = {'Back': pygame.Rect(260, 150, 250, 50)}
+    buttons = {
+        'Insert': pygame.Rect(20, 500, 150, 50),
+        'Delete': pygame.Rect(190, 500, 150, 50),
+        'Reverse': pygame.Rect(360, 500, 150, 50),
+        'Back': pygame.Rect(530, 500, 150, 50)
+        }
     utilities.draw_buttons(buttons, screen)
+    draw_linked_list(screen, linked_list)
     pygame.display.flip()
     return buttons
 
 
 def run_linked_list_editor(screen: pygame.Surface, clock: pygame.time.Clock):
+    linked_list = LinkedList()
     running = True
-    buttons = linked_list_editor(screen)
+    buttons = linked_list_editor(screen, linked_list)
     command = None
+    entry_rect = pygame.Rect(50, 500, 520, 70)
+    heading_rect = pygame.Rect(50, 400, 520, 50)
 
     while running:
         for event in pygame.event.get():
@@ -82,7 +100,16 @@ def run_linked_list_editor(screen: pygame.Surface, clock: pygame.time.Clock):
                         command = name
 
         if command is None:
-            buttons = linked_list_editor(screen)
+            buttons = linked_list_editor(screen, linked_list)
+
+        elif command == "Insert":
+            utilities.handle_button_click("Insert", buttons, screen)
+            insert_node(screen, entry_rect, heading_rect, linked_list)
+
+        elif command == "Delete":
+            utilities.handle_button_click("Delete", buttons, screen)
+            delete_node(screen, entry_rect, heading_rect, linked_list)
+
         elif command == "Back":
             utilities.handle_button_click("Back", buttons, screen)
             running = False

@@ -169,7 +169,7 @@ def draw_node_connects():
 
 
 def text_entry(screen: pygame.Surface, entry_rect: pygame.Rect, heading_rect: pygame.Rect,
-               heading: str = None, integer_only = False) -> str | None :
+               heading: str | None = None, integer_only = False) -> str | None :
     """
     provides a text box for text entry.
     :param screen: pygame.screen
