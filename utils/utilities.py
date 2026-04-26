@@ -1,12 +1,5 @@
-"""This file is for any functions that are used in multiple locations, such as draw text.
-
-There exists:
-    - Several button functions: Drawing buttons, drawing pressed buttons, handling button presses
-    - Text entry handler that returns string todo: implement lol
-
-This file also controls the theme and style. So call everything from here to keep consistent style"""
+"""This file is for any functions that are used in multiple locations, such as draw text"""
 import pygame
-import random
 import math
 
 pygame.init()
@@ -32,6 +25,24 @@ HIGHLIGHT_DELETE_COLOUR = pygame.Color("#C44A4A")
 
 
 ############################################################
+
+def handle_events(buttons: dict, current_module: str | None):
+    """
+    handle event loop, return clicked button text
+    :param buttons:
+    :param current_module:
+    :return:
+    """
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            pygame.quit()
+            quit()
+        elif event.type == pygame.MOUSEBUTTONDOWN and current_module is None:
+            for name, rect in buttons.items():
+                if rect.collidepoint(event.pos):
+                    current_module = name
+    return current_module
+
 
 def draw_text(text, pos, screen):
     """
@@ -177,8 +188,7 @@ def draw_node_connects(
         screen: pygame.Surface, node_1: pygame.Rect, node_2: pygame.Rect,
         color=pygame.Color("Black"), directed: bool = False,
         arrow_length: int = 8, arrow_width: int = 8,
-        start_location: str = "right", end_location: str = "left"
-):
+        start_location: str = "right", end_location: str = "left"):
     """
     draws a connection between two nodes. If directed, draws an arrow 
     pointing from node 1 to node 2.
@@ -206,9 +216,6 @@ def draw_node_connects(
             line_end = node_2.midbottom
         case _:
             raise ValueError("end_location is not valid. Please implement or make a valid choice.")
-
-
-
 
     pygame.draw.line(screen, pygame.Color("Black"), line_start, line_end)
 
@@ -300,11 +307,9 @@ def text_entry(screen: pygame.Surface, entry_rect: pygame.Rect, heading_rect: py
 
 
 def pop_up_message(
-        screen: pygame.Surface, message: str, duration: int = 1000,
-        information=False, error=False
-) -> None:
+        screen: pygame.Surface, message: str, duration: int = 1000, error=False) -> None:
     """
-    Draws a rectangle with a text message that dissapears after millisecond 
+    Draws a rectangle with a text message that disappears after millisecond
     duration. Uses different styles if communicating error or information.
     """
 

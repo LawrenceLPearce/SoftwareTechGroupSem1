@@ -5,7 +5,6 @@ from utils import utilities
 from DSP import linked_list_editor, BST_visualiser, stack_visualiser, queue_visualiser
 
 
-
 def dsp_menu(screen: pygame.Surface):
     left_lineup = screen.get_width() // 2 - 100
 
@@ -48,36 +47,23 @@ def run_dsp_menu(screen: pygame.Surface, clock: pygame.time.Clock):
     buttons = dsp_menu(screen)
 
     while running:
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                pygame.quit()
-                return
-            elif event.type == pygame.MOUSEBUTTONDOWN and current_module is None:
-                pos = event.pos
-                for name, rect in buttons.items():
-                    if rect.collidepoint(pos):
-                        current_module = name
+        current_module = utilities.handle_events(buttons, current_module)
 
         if current_module is None:
             buttons = dsp_menu(screen)
-        if current_module is None:
-            buttons = dsp_menu(screen)
         else:
-            if current_module == 'Stack Interaction':
-                utilities.handle_button_click("Stack Interaction", buttons, screen)
-                stack_visual(screen, clock)
-            elif current_module == 'Queue Interaction':
-                utilities.handle_button_click("Queue Interaction", buttons, screen)
-                queue_visual(screen, clock)
-            elif current_module == 'Linked List Editor':
-                utilities.handle_button_click("Linked List Editor", buttons, screen)
-                linked_list_visual(screen, clock)
-            elif current_module == 'Binary Search Tree':
-                utilities.handle_button_click("Binary Search Tree", buttons, screen)
-                binary_tree_visual(screen, clock)
-            elif current_module == 'Back to main menu':
-                utilities.handle_button_click("Back to main menu", buttons, screen)
-                running = False
+            utilities.handle_button_click(current_module, buttons, screen)
+            match current_module:
+                case 'Stack Interaction':
+                    stack_visual(screen, clock)
+                case 'Queue Interaction':
+                    queue_visual(screen, clock)
+                case 'Linked List Editor':
+                    linked_list_visual(screen, clock)
+                case 'Binary Search Tree':
+                    binary_tree_visual(screen, clock)
+                case 'Back to main menu':
+                    running = False
 
             # For demo, after module ends return to menu
             current_module = None

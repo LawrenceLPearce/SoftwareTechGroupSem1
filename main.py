@@ -5,13 +5,10 @@ from DSP import dsp_playground
 pygame.init()
 
 WIDTH, HEIGHT = 900, 600
-#todo: verify its ok to change the width and height
+# todo: verify its ok to change the width and height
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 FONT = pygame.font.SysFont(None, 36)
 clock = pygame.time.Clock()
-
-
-
 
 
 def main_menu():
@@ -21,10 +18,10 @@ def main_menu():
     utilities.draw_text("Algorithm Explorer", (left_lineup, 50), screen)
     buttons = {
         'Data Structures': pygame.Rect(left_lineup, 150, 220, 50),
-        'Sorting':         pygame.Rect(left_lineup, 230, 220, 50),
-        'Graphs':          pygame.Rect(left_lineup, 310, 220, 50),
-        'Heap':            pygame.Rect(left_lineup, 390, 220, 50),
-        'Puzzles':         pygame.Rect(left_lineup, 470, 220, 50),
+        'Sorting': pygame.Rect(left_lineup, 230, 220, 50),
+        'Graphs': pygame.Rect(left_lineup, 310, 220, 50),
+        'Heap': pygame.Rect(left_lineup, 390, 220, 50),
+        'Puzzles': pygame.Rect(left_lineup, 470, 220, 50),
     }
     utilities.draw_buttons(buttons, screen)
     pygame.display.flip()

@@ -39,42 +39,46 @@ class BST:
                 self._insert_recursive(root.right, key)
 
     def inorder(self):
-        """Perform an inorder traversal (Left → Root → Right) and print elements in sorted order."""
-        self._inorder_recursive(self.root)
-        print()
+        """Perform an inorder traversal (Left → Root → Right) and return elements in sorted order."""
+        return self._inorder_recursive(self.root)
 
     def _inorder_recursive(self, root):
         """Helper method for recursive inorder traversal."""
-
-        if root:
-
-            self._inorder_recursive(root.left)
-            print(root.val, end=" ")
-            self._inorder_recursive(root.right)
+        if not root:
+            return []
+        return (
+                self._inorder_recursive(root.left)
+                + [id(root)]
+                + self._inorder_recursive(root.right)
+        )
 
     def preorder(self):
-        """Perform a preorder traversal (Root → Left → Right) and print elements."""
-        self._preorder_recursive(self.root)
-        print()
+        """Perform a preorder traversal (Root → Left → Right) and return elements."""
+        return self._preorder_recursive(self.root)
 
     def _preorder_recursive(self, root):
         """Helper method for recursive preorder traversal."""
-        if root:
-            print(root.val, end=" ")
-            self._preorder_recursive(root.left)
-            self._preorder_recursive(root.right)
+        if not root:
+            return []
+        return (
+                [id(root)]
+                + self._preorder_recursive(root.left)
+                + self._preorder_recursive(root.right)
+        )
 
     def postorder(self):
-        """Perform a postorder traversal (Left → Right → Root) and print elements."""
-        self._postorder_recursive(self.root)
-        print()
+        """Perform a postorder traversal (Left → Right → Root) and return elements."""
+        return self._postorder_recursive(self.root)
 
     def _postorder_recursive(self, root):
         """Helper method for recursive postorder traversal."""
-        if root:
-            self._postorder_recursive(root.left)
-            self._postorder_recursive(root.right)
-            print(root.val, end=" ")
+        if not root:
+            return []
+        return (
+                self._postorder_recursive(root.left)
+                + self._postorder_recursive(root.right)
+                + [id(root)]
+        )
 
     def search(self, key):
         """Search for a key in BST. Returns (True/False, visited path)."""
