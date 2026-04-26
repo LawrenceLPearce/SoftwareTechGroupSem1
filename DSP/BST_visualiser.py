@@ -89,12 +89,9 @@ def tree_animation(bst: BST, order_list: list, screen: pygame.Surface, duration:
                     return
 
 
-def run_search_animation(bst: BST, val: int | str, screen: pygame.Surface):
+def run_search_animation(bst: BST, val: int, screen: pygame.Surface):
     """check if value exists, return found and order, and run unsuccessful animation if not"""
-    if val is None:
-        return None, None
-    else:
-        val = int(val)
+
 
     # first search to see if the key exists. This is for visual prompts only
     found, order = bst.search(val)
@@ -108,6 +105,11 @@ def run_search_animation(bst: BST, val: int | str, screen: pygame.Surface):
 
 def delete_node(bst, val: int | str | None, screen: pygame.Surface):
     """attempt to delete given value from the bst tree, and run animation."""
+    if val is None:
+        return None, None
+    else:
+        val = int(val)
+
     found, order = run_search_animation(bst, val, screen)
 
     if not found: return None
@@ -118,6 +120,10 @@ def delete_node(bst, val: int | str | None, screen: pygame.Surface):
 
 
 def search_node(bst: BST, val: int | str | None, screen: pygame.Surface):
+    if val is None:
+        return None, None
+    else:
+        val = int(val)
     """attempt to find given value in the bst tree, and run animation."""
     found, order = run_search_animation(bst, val, screen)
 
@@ -162,13 +168,13 @@ def postorder(bst: BST, screen: pygame.Surface):
 
 def run_bst_menu(screen: pygame.Surface, clock: pygame.time.Clock):
     bst = BST()
-    # bst.insert(50)
-    # bst.insert(30)
-    # bst.insert(70)
-    # bst.insert(20)
-    # bst.insert(40)
-    # bst.insert(60)
-    # bst.insert(80)
+    bst.insert(50)
+    bst.insert(30)
+    bst.insert(70)
+    bst.insert(20)
+    bst.insert(40)
+    bst.insert(60)
+    bst.insert(80)
 
     running = True
     current_module = None
