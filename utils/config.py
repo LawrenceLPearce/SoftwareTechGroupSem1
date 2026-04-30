@@ -18,3 +18,8 @@ NODE_EDGE_COLOUR = pygame.Color("#53ffdd")
 HIGHLIGHT_COLOUR = pygame.Color("#ffd869")
 HIGHLIGHT_FOUND_COLOUR = pygame.Color("#34ff66")
 HIGHLIGHT_DELETE_COLOUR = pygame.Color("#C44A4A")
+
+GRAPH_START_COLOUR = pygame.Color("#c679ff")
+GRAPH_END_COLOUR = pygame.Color("#3aff7e")
+GRAPH_OBSTACLE_COLOUR = pygame.Color("#3a1923")
+

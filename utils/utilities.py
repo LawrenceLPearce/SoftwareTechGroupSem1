@@ -46,8 +46,7 @@ def draw_text(text, pos, screen):
 
 def draw_text_in_rect(text, rect, screen, clear=False, v_offset=0, h_offset=0):
     """
-    Centers text within given rect.
-
+    Centers text within given rect, supports newline characters.
 
     :param text: text to be written
     :param rect: pygame.Rect
@@ -59,10 +58,19 @@ def draw_text_in_rect(text, rect, screen, clear=False, v_offset=0, h_offset=0):
     """
     if clear:
         pygame.draw.rect(screen, BACKGROUND_COLOUR, rect)
-    txt = FONT.render(text, True, TEXT_COLOUR)
-    center = (rect.centerx + h_offset, rect.centery + v_offset)
-    txt_rect = txt.get_rect(center=center)
-    screen.blit(txt, txt_rect)
+
+    lines = text.split('\n')
+    line_height = FONT.get_height()
+    total_height = line_height * len(lines)
+
+    for i, line in enumerate(lines):
+        txt = FONT.render(line, True, TEXT_COLOUR)
+        center = (
+            rect.centerx + h_offset,
+            rect.centery + v_offset - total_height // 2 + line_height * i + line_height // 2
+        )
+        txt_rect = txt.get_rect(center=center)
+        screen.blit(txt, txt_rect)
 
 
 def draw_offset_rect(outer_rect, screen, offset=8, outer_colour=SECONDARY_COLOUR, inner_colour=BACKGROUND_COLOUR):
