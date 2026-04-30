@@ -1,13 +1,13 @@
 import pygame
-from utils import utilities
+from utils import utilities, config
 from DSP import dsp_playground
-
+from sort_algorithms import bubble_sort
 pygame.init()
 
-WIDTH, HEIGHT = 900, 600
+WIDTH, HEIGHT = config.WIDTH, config.HEIGHT
 # todo: verify its ok to change the width and height
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
-FONT = pygame.font.SysFont(None, 36)
+FONT = config.FONT
 clock = pygame.time.Clock()
 
 
@@ -36,7 +36,7 @@ def data_structures_module():
 
 def sorting_module():
     # Bubble sort, selection sort, merge sort visualizations
-    pass
+    bubble_sort.run_sort_menu(screen, clock)
 
 
 def graphs_module():

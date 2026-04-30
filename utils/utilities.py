@@ -2,26 +2,14 @@
 import pygame
 import math
 
+from utils.config import FONT, BACKGROUND_COLOUR, TEXT_COLOUR, ERROR_COLOUR, SECONDARY_COLOUR, SECONDARY_COLOUR_SHADOW
+
 pygame.init()
-FONT = pygame.font.SysFont(None, 36)
+
 
 ############################ COLOURS #########################
 # Add any colours here so that if we change anything, it will apply everywhere.
 # Also, import colours from here so that it all stays consistent
-BACKGROUND_COLOUR = pygame.Color("#F5F0EB")
-TEXT_COLOUR = pygame.Color("Black")
-
-ERROR_COLOUR = pygame.Color("#C44A4A")  # For error messages
-
-SECONDARY_COLOUR = pygame.Color("#7EC8A4")  # also used for buttons
-SECONDARY_COLOUR_SHADOW = pygame.Color("#6DB893")
-
-NODE_COLOUR = pygame.Color("#53ffdd")
-NODE_EDGE_COLOUR = pygame.Color("#53ffdd")
-
-HIGHLIGHT_COLOUR = pygame.Color("#ffd869")
-HIGHLIGHT_FOUND_COLOUR = pygame.Color("#34ff66")
-HIGHLIGHT_DELETE_COLOUR = pygame.Color("#C44A4A")
 
 
 ############################################################
@@ -56,16 +44,24 @@ def draw_text(text, pos, screen):
     screen.blit(txt, pos)
 
 
-def draw_text_in_rect(text, rect, screen):
+def draw_text_in_rect(text, rect, screen, clear=False, v_offset=0, h_offset=0):
     """
-    centers text within given rect
+    Centers text within given rect.
+
+
     :param text: text to be written
     :param rect: pygame.Rect
     :param screen: pygame.Surface
+    :param clear: whether to clear the rect first or not
+    :param v_offset: vertical offset in pixels (positive = down, negative = up)
+    :param h_offset: horizontal offset in pixels (positive = right, negative = left)
     :return: None
     """
+    if clear:
+        pygame.draw.rect(screen, BACKGROUND_COLOUR, rect)
     txt = FONT.render(text, True, TEXT_COLOUR)
-    txt_rect = txt.get_rect(center=rect.center)
+    center = (rect.centerx + h_offset, rect.centery + v_offset)
+    txt_rect = txt.get_rect(center=center)
     screen.blit(txt, txt_rect)
 
 
@@ -127,7 +123,8 @@ def draw_buttons(buttons, screen):
     for text, rect in buttons.items():
         draw_button_shadow(rect, screen)
         pygame.draw.rect(screen, pygame.Color(SECONDARY_COLOUR), rect, border_radius=10)
-        draw_text(text, (rect.x + 20, rect.y + 10), screen)
+        draw_text_in_rect(text, rect, screen)
+        #draw_text(text, (rect.x + 20, rect.y + 10), screen)
 
 
 def handle_button_click(button_text, buttons, screen):
@@ -142,7 +139,8 @@ def handle_button_click(button_text, buttons, screen):
 
     # draw pressed button
     draw_button_pressed(rect, screen)
-    draw_text(button_text, (rect.x + 20 + 2, rect.y + 10 + 2), screen)  # shift text down
+    #draw_text(button_text, (rect.x + 20 + 2, rect.y + 10 + 2), screen)  # shift text down
+    draw_text_in_rect(button_text, rect, screen, v_offset=2)
     pygame.display.flip()
 
     # Wait for mouse release

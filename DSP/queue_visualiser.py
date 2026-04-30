@@ -1,7 +1,7 @@
 # visualiser for the queue. similar to stack visualiser, may touch up visuals but for now this is the basic setup
 # code inspired by stack_visualiser, also used code from Task 1.3 in the Week 10 tutorial sheet. Adjusted for queue format
 import pygame
-from utils import utilities
+from utils import utilities, config
 from DSP.queue_script import Queue
 
 BLOCK_W = 90
@@ -16,14 +16,14 @@ def _draw_queue(screen, font, queue):
     for i, val in enumerate(queue.items()):
         x = QUEUE_START_X + i * (BLOCK_W + BLOCK_GAP)
         rect = pygame.Rect(x, QUEUE_Y, BLOCK_W, BLOCK_H)
-        pygame.draw.rect(screen, utilities.SECONDARY_COLOUR, rect, border_radius=8)
-        label = font.render(str(val), True, utilities.TEXT_COLOUR)
+        pygame.draw.rect(screen, config.SECONDARY_COLOUR, rect, border_radius=8)
+        label = font.render(str(val), True, config.TEXT_COLOUR)
         screen.blit(label, label.get_rect(center=rect.center))
 
 
 def run_queue_visualiser(screen: pygame.Surface, clock: pygame.time.Clock):
     queue = Queue()
-    font = utilities.FONT
+    font = config.FONT
     counter = 1
 
     buttons = {

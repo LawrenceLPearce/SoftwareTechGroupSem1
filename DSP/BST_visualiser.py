@@ -1,6 +1,6 @@
 from DSP.binary_search_tree import BST
 import pygame
-from utils import utilities
+from utils import utilities, config
 
 ###
 
@@ -30,9 +30,9 @@ def calc_positions(root, depth=0, left=0.0, right=1.0, positions=None):
     return positions
 
 
-def draw_tree(screen, node, positions, font=utilities.FONT, highlight_val=None,
+def draw_tree(screen, node, positions, font=config.FONT, highlight_val=None,
               parent_rect: pygame.Rect = None,
-              node_width=50, highlight_colour=utilities.HIGHLIGHT_COLOUR):
+              node_width=50, highlight_colour=config.HIGHLIGHT_COLOUR):
     """iteratively draw full bst tree"""
     if node is None:
         return
@@ -41,7 +41,7 @@ def draw_tree(screen, node, positions, font=utilities.FONT, highlight_val=None,
     node_x -= node_width / 2  # adjust for width
 
     col = highlight_colour if (
-            highlight_val is not None and id(node) == highlight_val) else utilities.SECONDARY_COLOUR
+            highlight_val is not None and id(node) == highlight_val) else config.SECONDARY_COLOUR
 
     # draw node
     node_rect = pygame.Rect(node_x, node_y, node_width, 30)
@@ -60,7 +60,7 @@ def draw_tree(screen, node, positions, font=utilities.FONT, highlight_val=None,
 # TODO: Better Comments
 
 def tree_animation(bst: BST, order_list: list, screen: pygame.Surface, duration: int = 500,
-                   highlight_col=utilities.HIGHLIGHT_COLOUR, final_highlight_col=utilities.HIGHLIGHT_COLOUR):
+                   highlight_col=config.HIGHLIGHT_COLOUR, final_highlight_col=config.HIGHLIGHT_COLOUR):
     """Given an order, highlight a specific node in the bst tree for the given duration. Repeat for each order."""
     for node_val in order_list:
 
@@ -113,7 +113,7 @@ def delete_node(bst, val: int | str | None, screen: pygame.Surface):
     found, order = run_search_animation(bst, val, screen)
 
     if not found: return None
-    tree_animation(bst, order, screen, final_highlight_col=utilities.HIGHLIGHT_DELETE_COLOUR)
+    tree_animation(bst, order, screen, final_highlight_col=config.HIGHLIGHT_DELETE_COLOUR)
     bst.delete(val)
 
     return None
@@ -129,7 +129,7 @@ def search_node(bst: BST, val: int | str | None, screen: pygame.Surface):
 
     if not found: return None
 
-    tree_animation(bst, order, screen, final_highlight_col=utilities.HIGHLIGHT_FOUND_COLOUR)
+    tree_animation(bst, order, screen, final_highlight_col=config.HIGHLIGHT_FOUND_COLOUR)
 
     return order[-1]
 
