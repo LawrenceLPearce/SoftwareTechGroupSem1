@@ -1,5 +1,7 @@
 import pygame
 
+from utils import config, utilities
+
 
 class Node:
     def __init__(self, row, col, cell_size, h_offset=0, v_offset=0, gap=2):
@@ -18,7 +20,6 @@ class Node:
         self.is_start = False
         self.is_end = False
         self.is_obstacle = False
-
 
     def __str__(self):
         return (f"({self.row},{self.col}) "
@@ -48,13 +49,16 @@ class Node:
 
     def compute_f(self):
         if self.is_obstacle:
+            self.f = float('inf')
+            self.h = float('inf')
+            self.g = float('inf')
             return
 
-        self.f = self.g +self.h
+        self.f = self.g + self.h
 
 
 class Graph:
-    def __init__(self, rows, cols, cell_size, h_offset=0, v_offset=0):
+    def __init__(self, rows, cols, cell_size, screen, background_rect, h_offset=0, v_offset=0):
         self.rows = rows
         self.cols = cols
         self.cell_size = cell_size
@@ -64,6 +68,11 @@ class Graph:
         self.end_node = None
 
         self.build_neighbours()
+
+
+        # pygame attributes, needed for visualisation
+        self.screen = screen
+        self.background_rect = background_rect
 
     def get_node(self, r, c):
         return self.grid[r][c]
@@ -137,6 +146,59 @@ class Graph:
 
         node_list.insert(low, node)
 
+    def draw_graph(self, highlighted_nodes: list[Node] = None):
+        pygame.draw.rect(self.screen, 'light gray', self.background_rect, border_radius=10)
+        if highlighted_nodes is None:
+            highlighted_nodes = []
+
+        for col in self.grid:
+            for node in col:
+                if node in highlighted_nodes:
+                    colour = config.HIGHLIGHT_COLOUR
+                elif node.is_obstacle:
+                    colour = config.GRAPH_OBSTACLE_COLOUR
+                elif node.is_start:
+                    colour = config.GRAPH_START_COLOUR
+                elif node.is_end:
+                    colour = config.GRAPH_END_COLOUR
+                else:
+                    colour = config.SECONDARY_COLOUR
+
+                utilities.draw_button_shadow(node.rect, self.screen)
+                pygame.draw.rect(self.screen, colour, node.rect, border_radius=10)
+
+    def animate_node_path(self, path: list[Node]):
+        for i in range(len(path) - 1):
+            first_node = path[i]
+            second_node = path[i + 1]
+
+            if first_node.is_start or first_node.is_end:
+                pygame.draw.circle(self.screen, config.HIGHLIGHT_DELETE_COLOUR, first_node.rect.center, 5)
+
+            elif second_node.is_start or second_node.is_end:
+                pygame.draw.circle(self.screen, config.HIGHLIGHT_DELETE_COLOUR, second_node.rect.center, 5)
+
+            pygame.draw.line(self.screen, config.HIGHLIGHT_DELETE_COLOUR, first_node.rect.center, second_node.rect.center, 2)
+
+            utilities.delay_with_exit_detection(25)
+            pygame.display.flip()
+
+    def static_node_path(self, path: list[Node]):
+        for i in range(len(path) - 1):
+            first_node = path[i]
+            second_node = path[i + 1]
+
+            if first_node.is_start or first_node.is_end:
+                pygame.draw.circle(self.screen, config.HIGHLIGHT_DELETE_COLOUR, first_node.rect.center, 5)
+
+            elif second_node.is_start or second_node.is_end:
+                pygame.draw.circle(self.screen, config.HIGHLIGHT_DELETE_COLOUR, second_node.rect.center, 5)
+
+            pygame.draw.line(self.screen, config.HIGHLIGHT_DELETE_COLOUR, first_node.rect.center, second_node.rect.center, 2)
+
+        pygame.display.flip()
+
+
     def reconstruct_path(self):
         path = []
         current = self.end_node
@@ -145,7 +207,9 @@ class Graph:
             path.append(current)
             current = current.parent
 
-        return path
+        # invert path and return
+
+        return path[::-1]
 
     def a_star_search(self):
         open_list: list[Node] = [self.start_node]
@@ -156,34 +220,39 @@ class Graph:
         self.start_node.compute_f()
 
         while len(open_list) > 0:
-            current_node = open_list[0] # this list is sorted, so lowest f value is always at [0]
 
+            current_node = open_list[0]  # this list is sorted at insertion time, so lowest f value is always at [0]
 
-            if current_node.is_end: # goal found
+            if current_node.is_end:  # goal found
                 return self.reconstruct_path()
 
-            print(str(current_node))
+            #print(str(current_node))
 
             # move node to other list
             open_list.pop(0)
             closed_list.append(current_node)
 
             for node in current_node.neighbours:
-                if node in closed_list or node.is_obstacle: # don't repeat nodes
+                if node in closed_list or node.is_obstacle:  # don't repeat nodes
                     continue
 
-                tentative_g = self.start_node.g + self.manhattan_distance(current_node, node)
+                tentative_g = current_node.g + self.manhattan_distance(current_node, node)
 
-                if node not in open_list:
-                    open_list.append(node)
-
-                elif tentative_g >= node.g: # this path is worse, exit
-                    continue
+                if node in open_list:
+                    if tentative_g >= node.g:
+                        continue
+                    # better path found - remove so we can re-insert at correct position
+                    open_list.remove(node)
 
                 # the path is better
                 node.parent = current_node
                 node.g = tentative_g
-                node.h = self.manhattan_distance(node, current_node)
+                node.h = self.manhattan_distance(node, self.end_node)
                 node.compute_f()
+                self.priority_f_queue_insert(open_list, node)
+
+            self.draw_graph(closed_list)
+            pygame.display.flip()
+
 
         return None

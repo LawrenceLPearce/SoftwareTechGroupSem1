@@ -351,3 +351,17 @@ def pop_up_message(
                 return
 
         draw_pop_up()
+
+def delay_with_exit_detection(duration):
+    start_time = pygame.time.get_ticks()
+
+    while True:
+        current_time = pygame.time.get_ticks()
+
+        if current_time - start_time > duration:
+            break
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                return
