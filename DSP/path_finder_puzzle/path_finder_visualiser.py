@@ -1,4 +1,3 @@
-from unittest import case
 
 import pygame
 
@@ -12,7 +11,7 @@ INSTRUCTIONS_RECT = pygame.Rect(150, 50, 600, 25)
 # node calculations
 # maximise the columns based on the row count to fill rect.
 graph_max_area = pygame.Rect(50, 75, 800, 450)  # rect defining the maximum area that the graph can occupy
-NODE_COUNT = 10
+NODE_COUNT = 15
 NODE_SIZE = graph_max_area.height // NODE_COUNT  # maximise the size of each node
 graph_area_size = NODE_SIZE * NODE_COUNT + 1  # the new size of the graph area
 GRAPH_RECT = pygame.Rect((config.WIDTH - graph_area_size) // 2,  # the rect within which graph is drawn
@@ -20,72 +19,115 @@ GRAPH_RECT = pygame.Rect((config.WIDTH - graph_area_size) // 2,  # the rect with
                          graph_area_size,
                          graph_area_size)
 
+# rectangle where information regarding the current node / mode will be printed
 MODE_INFO_AREA = pygame.Rect(700, 100, 190, 240)
 
 def node_clicked(graph: Graph, screen: pygame.Surface, event: pygame.event.Event, node_command):
+    """set the node to the current command, if there is no command then return the Node to be highlighted"""
     node = graph.get_clicked_node(event)
+    command = None
     match node_command:
         case 'Set Start':
             set_start_clicked(node,graph, screen)
         case 'Set End':
             set_end_clicked(node,graph, screen)
         case 'Make Obstacle':
+            command = 'Make Obstacle'
             make_obstacle_clicked(node, screen)
         case 'Clear':
-            clear_clicked(node, screen)
+            clear_clicked(node, graph, screen)
 
         case _:
             return node, None
 
-    return None, None
+    return None, command
 
 
 def set_start_clicked(selected_node: Node, graph: Graph, screen: pygame.Surface):
+    """If the node is selected, set the start node to that node, otherwise set the mode to start"""
     if selected_node is None:
         utilities.draw_text_in_rect("Click a node below to apply!", INSTRUCTIONS_RECT, screen, clear=True)
         return "Set Start"
     else:
-        graph.clear_node_start()
-        selected_node.set_start_true()
+        graph.set_start_node(selected_node)
         pygame.display.flip()
         return None
 
 
 def set_end_clicked(selected_node: Node, graph: Graph, screen: pygame.Surface):
+    """set Node as end if node is not None, otherwise set mode to end."""
     if selected_node is None:
         utilities.draw_text_in_rect("Click a node below to apply!", INSTRUCTIONS_RECT, screen, clear=True)
         return "Set End"
     else:
-        graph.clear_node_end()
-        selected_node.set_end_true()
+        graph.set_end_node(selected_node)
         pygame.display.flip()
         return None
 
 
 def make_obstacle_clicked(selected_node: Node, screen: pygame.Surface):
+    """set Node as obstacle if node is not None, otherwise set mode to obstacle"""
     if selected_node is None:
         utilities.draw_text_in_rect("Click a node below to apply!", INSTRUCTIONS_RECT, screen, clear=True)
         return "Make Obstacle"
     else:
         selected_node.set_obstacle_true()
         pygame.display.flip()
-        return None
+        return "Make Obstacle"
 
 
-def clear_clicked(selected_node: Node, screen: pygame.Surface):
+def clear_clicked(selected_node: Node, graph: Graph, screen: pygame.Surface):
+    """Clear node or mode. Return current mode"""
     if selected_node is None:
         utilities.draw_text_in_rect("Click a node to edit, or hit Run!", INSTRUCTIONS_RECT, screen, clear=True)
         return "Clear"
     else:
-        selected_node.clear_state()
+        graph.clear_node_state(selected_node)
+        #selected_node.clear_state()
         pygame.display.flip()
         return None
 
+def draw_line_between_nodes(path: list[Node], screen: pygame.Surface):
 
-def draw_graph(graph: Graph, screen: pygame.Surface, highlighted_Node: Node = None):
+    for i in range(len(path)-1):
+        first_node = path[i]
+        second_node = path[i+1]
+
+        if first_node.is_start or first_node.is_end:
+            pygame.draw.circle(screen, config.HIGHLIGHT_DELETE_COLOUR, first_node.rect.center, 5)
+
+        elif second_node.is_start or second_node.is_end:
+            pygame.draw.circle(screen, config.HIGHLIGHT_DELETE_COLOUR, second_node.rect.center, 5)
+
+        pygame.draw.line(screen, config.HIGHLIGHT_DELETE_COLOUR, first_node.rect.center, second_node.rect.center, 2)
+
+    pygame.display.flip()
+
+def run_astar(graph: Graph, screen: pygame.Surface, clock: pygame.time.Clock):
+
+    # check the route is valid
+    print(graph.start_node)
+    if graph.start_node is None:
+        utilities.pop_up_message(screen, "You must define a start Node", error=True)
+        return []
+
+    if graph.end_node is None:
+        utilities.pop_up_message(screen, "You must define a end Node", error=True)
+        return []
+
+    path = graph.a_star_search()
+
+    if path is None:
+        utilities.pop_up_message(screen, "No valid path was found", error=True)
+        return []
+
+    return path
+
+def draw_graph(graph: Graph, screen: pygame.Surface, highlighted_node: Node = None):
+    """iteratively draw every node in the graph"""
     for col in graph.grid:
         for node in col:
-            if node == highlighted_Node:
+            if node == highlighted_node:
                 colour = config.HIGHLIGHT_COLOUR
             elif node.is_obstacle:
                 colour = config.GRAPH_OBSTACLE_COLOUR
@@ -100,14 +142,15 @@ def draw_graph(graph: Graph, screen: pygame.Surface, highlighted_Node: Node = No
             pygame.draw.rect(screen, colour, node.rect, border_radius=10)
 
 
+
 def run_sort_menu(screen: pygame.Surface, clock: pygame.time.Clock):
     running = True
-    command = None
 
     # innitialise the graph
     graph = Graph(NODE_COUNT, NODE_COUNT, NODE_SIZE, h_offset=GRAPH_RECT.left, v_offset=GRAPH_RECT.top)
-    graph.grid[0][0].is_start = True
-    graph.grid[-1][-1].is_end = True
+    graph.set_start_node(graph.grid[0][0])
+    graph.set_end_node(graph.grid[-1][-1])
+
 
     buttons = {
         'Set Start': pygame.Rect(10, 100, 190, 50),  # side buttons that control node state
@@ -129,6 +172,8 @@ def run_sort_menu(screen: pygame.Surface, clock: pygame.time.Clock):
 
     node_command = None  # controlled by side buttons, manage the nodes
     selected_node = None
+
+    found_path = []
     while running:
 
         for event in pygame.event.get():
@@ -155,9 +200,13 @@ def run_sort_menu(screen: pygame.Surface, clock: pygame.time.Clock):
                 case 'Run!':
                     node_command = None
                     selected_node = None
+                    found_path = run_astar(graph, screen, clock)
                 case 'Reset':
                     node_command = None
                     selected_node = None
+                    graph = Graph(NODE_COUNT, NODE_COUNT, NODE_SIZE, h_offset=GRAPH_RECT.left, v_offset=GRAPH_RECT.top)
+                    graph.set_start_node(graph.grid[0][0])
+                    graph.set_end_node(graph.grid[-1][-1])
                 case 'Back':
                     return
 
@@ -171,7 +220,7 @@ def run_sort_menu(screen: pygame.Surface, clock: pygame.time.Clock):
                     node_command = make_obstacle_clicked(selected_node, screen)
                     selected_node = None
                 case 'Clear':
-                    node_command = clear_clicked(selected_node, screen)
+                    node_command = clear_clicked(selected_node, graph, screen)
 
 
 
@@ -179,26 +228,33 @@ def run_sort_menu(screen: pygame.Surface, clock: pygame.time.Clock):
         # utilities.draw_text_in_rect(instructions[command], INSTRUCTIONS_RECT, screen, clear=True)
 
         # wipe screen and draw everything
-        #utilities.fill_screen(screen)
-        pygame.draw.rect(screen, 'light gray', GRAPH_RECT, border_radius=10)
-        draw_graph(graph, screen, highlighted_Node=selected_node)
-        utilities.draw_buttons(buttons, screen)
+        utilities.fill_screen(screen)
+        utilities.draw_text_in_rect("Sorting Visualiser", pygame.Rect(0, 20, screen.get_width(), 20), screen)
 
         if node_command is not None:
-            utilities.draw_text_in_rect(f"Current Mode: \n {node_command}", MODE_INFO_AREA, screen, clear=True)
-
+            text = f"Current Mode:\n{node_command}"
         elif selected_node is not None:
-            utilities.draw_text_in_rect(f"Current Node: \n{selected_node}", MODE_INFO_AREA, screen, clear=True)
+            text = f"Current Node:\n{selected_node}"
         else:
-            pygame.draw.rect(screen, config.BACKGROUND_COLOUR, MODE_INFO_AREA)
+            text = ""
+
+        utilities.draw_text_in_rect(text, MODE_INFO_AREA, screen)
+
+
+        pygame.draw.rect(screen, 'light gray', GRAPH_RECT, border_radius=10)
+        draw_graph(graph, screen, highlighted_node=selected_node)
+        utilities.draw_buttons(buttons, screen)
+        draw_line_between_nodes(found_path, screen)
 
 
         pygame.display.flip()
-
         clock.tick(30)
 
-
-if __name__ == '__main__':
+def main():
     screen = pygame.display.set_mode((config.WIDTH, config.HEIGHT))
     clock = pygame.time.Clock()
     run_sort_menu(screen, clock)
+
+
+if __name__ == '__main__':
+    main()
