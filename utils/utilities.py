@@ -1,18 +1,10 @@
 """This file is for any functions that are used in multiple locations, such as draw text"""
 import pygame
 import math
-
 from utils.config import FONT, BACKGROUND_COLOUR, TEXT_COLOUR, ERROR_COLOUR, SECONDARY_COLOUR, SECONDARY_COLOUR_SHADOW
 
 pygame.init()
 
-
-############################ COLOURS #########################
-# Add any colours here so that if we change anything, it will apply everywhere.
-# Also, import colours from here so that it all stays consistent
-
-
-############################################################
 
 def handle_events(buttons: dict, current_module: str | None):
     """
@@ -159,6 +151,7 @@ def handle_button_click(button_text, buttons, screen):
 
 
 def fill_screen(screen):
+    """fill the screen with background colour"""
     screen.fill(pygame.Color(BACKGROUND_COLOUR))
 
 
@@ -291,20 +284,25 @@ def text_entry(screen: pygame.Surface, entry_rect: pygame.Rect, heading_rect: py
 
     text = ''
     running = True
+
     while running:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
+
             if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_ESCAPE:
+                # special keys
+                if event.key == pygame.K_ESCAPE: # cancel
                     return None
-                if event.key == pygame.K_KP_ENTER or event.key == pygame.K_RETURN:
+                if event.key == pygame.K_KP_ENTER or event.key == pygame.K_RETURN: # save and exit
                     running = False
                     break
                 if event.key == pygame.K_BACKSPACE:
                     text = text[:-1]
+
                 elif not integer_only or event.unicode.isdigit():  # check that the input is valid
                     text += event.unicode
+
                 draw_offset_rect(entry_rect, screen)
                 draw_text_in_rect(text, entry_rect, screen)
                 pygame.display.flip()
@@ -314,9 +312,13 @@ def text_entry(screen: pygame.Surface, entry_rect: pygame.Rect, heading_rect: py
 
 def pop_up_message(
         screen: pygame.Surface, message: str, duration: int = 1000, error=False) -> None:
-    """
-    Draws a rectangle with a text message that disappears after millisecond
-    duration. Uses different styles if communicating error or information.
+    """Draws a rectangle with a text message that disappears after millisecond duration.
+Uses different styles if communicating error or information.
+    :param screen: screen instance to draw to
+    :param message: str message to display
+    :param duration: length of time in milliseconds to display message for
+    :param error: bool whether message is an error or not
+    :return: None
     """
 
     def draw_pop_up():
@@ -353,6 +355,11 @@ def pop_up_message(
         draw_pop_up()
 
 def delay_with_exit_detection(duration):
+    """
+    Delay for given duration and detect quit button pressed.
+    :param duration: length of time in milliseconds to delay for
+    :return: None
+    """
     start_time = pygame.time.get_ticks()
 
     while True:

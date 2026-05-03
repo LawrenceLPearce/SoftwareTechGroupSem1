@@ -1,6 +1,7 @@
+"""This program contains functions to implement and run Graph, allowing users to set node states,
+make obstacle and run a* search."""
 import pygame
-
-from node_graph import Node, Graph
+from path_finder_puzzle.node_graph import Node, Graph
 from utils import utilities, config
 
 pygame.init()
@@ -9,7 +10,7 @@ INSTRUCTIONS_RECT = pygame.Rect(150, 50, 600, 25)
 
 # node calculations
 # maximise the columns based on the row count to fill rect.
-graph_max_area = pygame.Rect(50, 75, 800, 450)  # rect defining the maximum area that the graph can occupy
+graph_max_area = pygame.Rect(50, 75, 800, 450)  # working rect defining the maximum area that the graph can occupy
 NODE_COUNT = 15
 NODE_SIZE = graph_max_area.height // NODE_COUNT  # maximise the size of each node
 graph_area_size = NODE_SIZE * NODE_COUNT + 1  # the new size of the graph area
@@ -83,13 +84,13 @@ def clear_clicked(selected_node: Node, graph: Graph, screen: pygame.Surface):
         return "Clear"
     else:
         graph.clear_node_state(selected_node)
-        # selected_node.clear_state()
         pygame.display.flip()
         return None
 
 
 
-def run_astar(graph: Graph, screen: pygame.Surface, clock: pygame.time.Clock):
+def run_astar(graph: Graph, screen: pygame.Surface):
+    """validate graph and perform a* search."""
     # check the route is valid
     print(graph.start_node)
     if graph.start_node is None:
@@ -111,33 +112,14 @@ def run_astar(graph: Graph, screen: pygame.Surface, clock: pygame.time.Clock):
     return path
 
 
-def draw_graph(graph: Graph, screen: pygame.Surface, highlighted_node: Node = None):
-    """iteratively draw every node in the graph"""
-    for col in graph.grid:
-        for node in col:
-            if node == highlighted_node:
-                colour = config.HIGHLIGHT_COLOUR
-            elif node.is_obstacle:
-                colour = config.GRAPH_OBSTACLE_COLOUR
-            elif node.is_start:
-                colour = config.GRAPH_START_COLOUR
-            elif node.is_end:
-                colour = config.GRAPH_END_COLOUR
-            else:
-                colour = config.SECONDARY_COLOUR
-
-            utilities.draw_button_shadow(node.rect, screen)
-            pygame.draw.rect(screen, colour, node.rect, border_radius=10)
-
-
 def run_sort_menu(screen: pygame.Surface, clock: pygame.time.Clock):
     running = True
 
-    # innitialise the graph
+    # initialise the graph
     graph = Graph(NODE_COUNT, NODE_COUNT, NODE_SIZE, screen, GRAPH_RECT, h_offset=GRAPH_RECT.left,
                   v_offset=GRAPH_RECT.top)
-    graph.set_start_node(graph.grid[0][0])
-    graph.set_end_node(graph.grid[-1][-1])
+    graph.set_start_node(graph.get_node(0, 0))
+    graph.set_end_node(graph.get_node(0, 0))
 
     buttons = {
         'Set Start': pygame.Rect(10, 100, 190, 50),  # side buttons that control node state
@@ -149,19 +131,13 @@ def run_sort_menu(screen: pygame.Surface, clock: pygame.time.Clock):
         'Reset': pygame.Rect(390, 540, 150, 50),
         'Back': pygame.Rect(560, 540, 150, 50)}
 
-    utilities.fill_screen(screen)
-    utilities.draw_buttons(buttons, screen)
-    utilities.draw_text_in_rect("Sorting Visualiser", pygame.Rect(0, 20, screen.get_width(), 20), screen)
-    pygame.draw.rect(screen, 'light grey', GRAPH_RECT, border_radius=10)
-
-    # draw_graph(graph, screen)
-    # graph.draw_graph(screen)
     command = None  # overall graph controls
-
     node_command = None  # controlled by side buttons, manage the nodes
-    selected_node = None
+    selected_node = None # current node that node command will be applied to
+    found_path = [] # result of the a* search. Empty until search is performed.
 
-    found_path = []
+
+    # main program loop
     while running:
 
         for event in pygame.event.get():
@@ -183,10 +159,11 @@ def run_sort_menu(screen: pygame.Surface, clock: pygame.time.Clock):
             utilities.handle_button_click(command, buttons, screen)
 
             match command:
+                # control commands
                 case 'Run!':
                     node_command = None
                     selected_node = None
-                    found_path = run_astar(graph, screen, clock)
+                    found_path = run_astar(graph, screen)
                 case 'Reset':
                     node_command = None
                     selected_node = None
@@ -198,6 +175,7 @@ def run_sort_menu(screen: pygame.Surface, clock: pygame.time.Clock):
                 case 'Back':
                     return
 
+                # node commands
                 case 'Set Start':
                     node_command = set_start_clicked(selected_node, graph, screen)
                     selected_node = None
@@ -211,12 +189,12 @@ def run_sort_menu(screen: pygame.Surface, clock: pygame.time.Clock):
                     node_command = clear_clicked(selected_node, graph, screen)
 
         command = None
-        # utilities.draw_text_in_rect(instructions[command], INSTRUCTIONS_RECT, screen, clear=True)
 
         # wipe screen and draw everything
         utilities.fill_screen(screen)
         utilities.draw_text_in_rect("A* Grid Search", pygame.Rect(0, 20, screen.get_width(), 20), screen)
 
+        # display node stats / current mode info
         if node_command is not None:
             text = f"Current Mode:\n{node_command}"
         elif selected_node is not None:
@@ -227,8 +205,6 @@ def run_sort_menu(screen: pygame.Surface, clock: pygame.time.Clock):
         utilities.draw_text_in_rect(text, MODE_INFO_AREA, screen)
         utilities.draw_text_in_rect("Up, down, left, right, NO diagonals", INSTRUCTIONS_RECT, screen)
 
-        # pygame.draw.rect(screen, 'light gray', GRAPH_RECT, border_radius=10)
-        # draw_graph(graph, screen, highlighted_node=selected_node)
         graph.draw_graph(highlighted_nodes=[selected_node])
 
         utilities.draw_buttons(buttons, screen)
@@ -239,6 +215,7 @@ def run_sort_menu(screen: pygame.Surface, clock: pygame.time.Clock):
 
 
 def main():
+    """Launch the graph"""
     screen = pygame.display.set_mode((config.WIDTH, config.HEIGHT))
     clock = pygame.time.Clock()
     run_sort_menu(screen, clock)

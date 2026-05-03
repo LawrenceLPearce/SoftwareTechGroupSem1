@@ -1,12 +1,12 @@
 import pygame
 from utils import utilities, config
 from DSP import dsp_playground
-from sort_algorithms import bubble_sort
+from sort_algorithms import sorting_algorithms
+from path_finder_puzzle import path_finder_visualiser
 from graph_traversal import graph_traversal
 pygame.init()
 
 WIDTH, HEIGHT = config.WIDTH, config.HEIGHT
-# todo: verify its ok to change the width and height
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 FONT = config.FONT
 clock = pygame.time.Clock()
@@ -37,7 +37,7 @@ def data_structures_module():
 
 def sorting_module():
     # Bubble sort, selection sort, merge sort visualizations
-    bubble_sort.run_sort_menu(screen, clock)
+    sorting_algorithms.run_sort_menu(screen, clock)
 
 
 def graphs_module():
@@ -52,7 +52,7 @@ def heap_module():
 
 def puzzles_module():
     # Pathfinding, event simulation, DP puzzles
-    pass
+    path_finder_visualiser.run_sort_menu(screen, clock)
 
 
 def main():

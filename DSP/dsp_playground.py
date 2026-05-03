@@ -6,6 +6,7 @@ from DSP import linked_list_editor, BST_visualiser, stack_visualiser, queue_visu
 
 
 def dsp_menu(screen: pygame.Surface):
+    """return button dict for dsp menu and draw buttons on screen."""
     left_lineup = screen.get_width() // 2 - 100
 
     utilities.fill_screen(screen)
@@ -22,15 +23,13 @@ def dsp_menu(screen: pygame.Surface):
     return buttons
 
 
-# placeholder functions that will call the separate files
+
 def stack_visual(screen: pygame.Surface, clock: pygame.time.Clock):
     stack_visualiser.run_stack_visualiser(screen, clock)
-    # ^ added this, will run the stack visualiser - Nathan
 
 
 def queue_visual(screen: pygame.Surface, clock: pygame.time.Clock):
     queue_visualiser.run_queue_visualiser(screen, clock)
-    # ^ added this, will run the queue visualiser - Nathan
 
 
 def linked_list_visual(screen: pygame.Surface, clock: pygame.time.Clock):
