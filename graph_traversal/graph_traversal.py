@@ -142,7 +142,7 @@ def run_graph_visualiser(screen: pygame.Surface, clock: pygame.time.Clock):
         "BFS" : pygame.Rect(30, 150, 160, 50),
         "DFS" : pygame.Rect(30, 230, 160, 50),
         "Reset": pygame.Rect(30, 310, 160, 50),
-        "Back to Menu": pygame.Rect(30, 530, 160, 50),
+        "Back": pygame.Rect(30, 530, 160, 50),
     }
 
     start_node = None # selected node
