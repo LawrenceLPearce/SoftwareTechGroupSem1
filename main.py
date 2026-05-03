@@ -2,6 +2,7 @@ import pygame
 from utils import utilities, config
 from DSP import dsp_playground
 from sort_algorithms import bubble_sort
+from graph_traversal import graph_traversal
 pygame.init()
 
 WIDTH, HEIGHT = config.WIDTH, config.HEIGHT
@@ -41,7 +42,7 @@ def sorting_module():
 
 def graphs_module():
     # BFS, DFS visualization with interactive graph
-    pass
+    graph_traversal.run_graph_visualiser(screen, clock)
 
 
 def heap_module():
