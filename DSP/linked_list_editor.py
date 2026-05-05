@@ -16,7 +16,7 @@ def insert_node(
         heading="Enter numerical value then press ENTER",
         integer_only=True
     )
-
+ 
     if not value: return
 
     index = utilities.text_entry(
