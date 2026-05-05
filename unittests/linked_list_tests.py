@@ -10,21 +10,21 @@ def make_linked_list() -> LinkedList:
         
 
 class TestInsert(unittest.TestCase):
-    def test_insert_structure(self):
+    def test_insert(self):
         linked_list = make_linked_list()
         linked_list.insert(100, 2)
         self.assertEqual(linked_list.head.next.next.data, 100)
 
 
 class TestDelete(unittest.TestCase):
-    def test_delete_structure(self):
+    def test_delete(self):
         linked_list = make_linked_list()
-        linked_list.delete(80)
+        linked_list.delete(80) # Delete head
         self.assertEqual(linked_list.head.data, 60)
 
 
 class TestReverse(unittest.TestCase):
-    def test_reverse_structure(self):
+    def test_reverse(self):
         linked_list = make_linked_list()
         linked_list.reverse()
 
@@ -39,7 +39,7 @@ class TestReverse(unittest.TestCase):
 
 
 def main():
-    unittest.main(verbosity=3)
+    unittest.main(verbosity=2)
 
 
 if __name__ == '__main__':
