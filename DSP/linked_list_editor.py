@@ -53,7 +53,9 @@ def delete_node(
 
 def draw_linked_list(screen: pygame.Surface, linked_list: LinkedList) -> None:
     current = linked_list.head
-    x_position = 30
+    nodes = len(linked_list)
+
+    x_position = (screen.get_width() - (nodes * NODE_WIDTH) - ((nodes - 1) * 70))/2
     y_position = 300
     previous_node = None
 

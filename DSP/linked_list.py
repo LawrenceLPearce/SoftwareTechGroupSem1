@@ -7,6 +7,10 @@ class Node:
 class LinkedList:
     def __init__(self) -> None:
         self.head: Node | None = None
+        self.length: int = 0
+    
+    def __len__(self) -> int:
+        return self.length
     
     def insert(self, data: int, index: int) -> bool:
         """
@@ -18,6 +22,7 @@ class LinkedList:
         if index == 0:
             new_node.next = self.head
             self.head = new_node
+            self.length += 1
             return True
         
         current = self.head
@@ -26,6 +31,7 @@ class LinkedList:
             if count == index - 1:
                 new_node.next = current.next
                 current.next = new_node
+                self.length += 1
                 return True
             count += 1
             current = current.next
@@ -46,6 +52,7 @@ class LinkedList:
                     previous.next = current.next
                 else:
                     self.head = current.next
+                self.length -= 1
                 return True
             previous = current
             current = current.next
