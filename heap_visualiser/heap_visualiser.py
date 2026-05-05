@@ -4,7 +4,7 @@ from heap_visualiser.heap import Heap
 from utils import config
 
 
-# TODO: add comments
+# TODO: add comments, error messages, instructions
 
 
 ROW_HEIGHT = 70
@@ -97,7 +97,7 @@ def draw_heap_node(
     if highlights and index in highlights:
         color = config.HIGHLIGHT_COLOUR
     else:
-        color = config.NODE_COLOUR
+        color = config.SECONDARY_COLOUR
 
     utilities.draw_node(
         screen=screen, rect=node_rect, color=color, 
