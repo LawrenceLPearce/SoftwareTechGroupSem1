@@ -3,7 +3,7 @@ from heap_visualiser.heap import Heap
 
 
 def make_heap() -> Heap:
-    default_values = [1, 3, 4, 10, 20, 35, 5]
+    default_values = [1, 3, 4, 10, 20, 35]
     heap = Heap(size=len(default_values))
 
     for value in default_values:
