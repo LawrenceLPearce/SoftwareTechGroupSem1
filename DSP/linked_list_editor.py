@@ -36,7 +36,7 @@ def insert_node(
 def delete_node(
         screen: pygame.Surface, entry_rect: pygame.Rect,
         heading_rect: pygame.Rect, linked_list: LinkedList
-) -> None:
+    ) -> None:
     value = utilities.text_entry(
         screen, entry_rect, heading_rect,
         heading="Enter value of node you wish to delete",
