@@ -25,7 +25,12 @@ class TestDelete(unittest.TestCase):
 
 class TestReverse(unittest.TestCase):
     def test_reverse(self):
-        linked_list = make_linked_list()
+        linked_list = LinkedList()
+        linked_list.insert(1, 0)
+        linked_list.insert(2, 1)
+        linked_list.insert(3, 2)
+        linked_list.insert(4, 3)
+
         linked_list.reverse()
 
         # Iterate through list and track order
@@ -35,7 +40,7 @@ class TestReverse(unittest.TestCase):
             visited.append(current.data)
             current = current.next
 
-        self.assertEqual(visited, [50, 30, 70, 20, 40, 60, 80])
+        self.assertEqual(visited, [4, 3, 2, 1])
 
 
 def main():
