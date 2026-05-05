@@ -4,7 +4,7 @@ from heap_visualiser.heap import Heap
 from utils import config
 
 
-# TODO: add comments, error messages, instructions
+# TODO: add comments
 
 
 ROW_HEIGHT = 70
@@ -46,6 +46,7 @@ def insert(
 
 def extract(screen: pygame.Surface, heap: Heap) -> None:
     if len(heap) == 0:
+        utilities.pop_up_message(screen, "Nothing to extract", error=True)
         return
     
     heap_state = heap.animate_remove()
@@ -63,7 +64,7 @@ def extract(screen: pygame.Surface, heap: Heap) -> None:
 
         draw_heap(screen, heap, highlights)
         
-        hold_frame(600)
+        hold_frame(500)
 
 
 def hold_frame(duration: int) -> None:
