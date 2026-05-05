@@ -4,6 +4,9 @@ from DSP import dsp_playground
 from sort_algorithms import sorting_algorithms
 from path_finder_puzzle import path_finder_visualiser
 from graph_traversal import graph_traversal
+from heap_visualiser import heap_visualiser
+
+
 pygame.init()
 
 WIDTH, HEIGHT = config.WIDTH, config.HEIGHT
@@ -47,7 +50,7 @@ def graphs_module():
 
 def heap_module():
     # Heap insertion and extraction visualization
-    pass
+    heap_visualiser.run_heap_visualiser(screen, clock)
 
 
 def puzzles_module():
