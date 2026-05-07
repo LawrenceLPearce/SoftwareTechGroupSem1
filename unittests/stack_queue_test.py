@@ -91,7 +91,7 @@ class TestStack(unittest.TestCase):
         for _ in range(n):
             s.pop()
         elapsed = time.perf_counter() - start
-        print(f"\n[Stack benchmark] {n:,} push+pop: {elapsed:.4f}s")
+        print(f"\nStack benchmark - unit count {n:,} pushed and popped in {elapsed:.4f}s")
         self.assertLess(elapsed, 5.0,
                         "Stack benchmark took longer than 5 seconds")
 
@@ -179,7 +179,7 @@ class TestQueue(unittest.TestCase):
         for _ in range(n):
             q.dequeue()
         elapsed = time.perf_counter() - start
-        print(f"\n[Queue benchmark] {n:,} enqueue+dequeue: {elapsed:.4f}s")
+        print(f"\nQueue benchmark - unit count {n:,} enqueued and dequeued in {elapsed:.4f}s")
         self.assertLess(elapsed, 5.0,
                         "Queue benchmark took longer than 5 seconds")
 
