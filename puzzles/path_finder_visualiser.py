@@ -1,7 +1,7 @@
 """This program contains functions to implement and run Graph, allowing users to set node states,
 make obstacle and run a* search."""
 import pygame
-from path_finder_puzzle.node_graph import Node, Graph
+from puzzles.node_graph import Node, Graph
 from utils import utilities, config
 
 pygame.init()

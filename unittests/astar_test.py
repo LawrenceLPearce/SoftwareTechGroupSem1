@@ -1,5 +1,5 @@
 import unittest
-from path_finder_puzzle.node_graph import Graph
+from puzzles.node_graph import Graph
 
 
 def make_graph(rows, cols):

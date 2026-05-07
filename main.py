@@ -2,7 +2,7 @@ import pygame
 from utils import utilities, config
 from DSP import dsp_playground
 from sort_algorithms import sorting_algorithms
-from path_finder_puzzle import path_finder_visualiser
+from puzzles import puzzle_menu
 from graph_traversal import graph_traversal
 from heap_visualiser import heap_visualiser
 
@@ -55,7 +55,7 @@ def heap_module():
 
 def puzzles_module():
     # Pathfinding, event simulation, DP puzzles
-    path_finder_visualiser.run_sort_menu(screen, clock)
+    puzzle_menu.run_puzzle_menu(screen, clock)
 
 
 def main():
