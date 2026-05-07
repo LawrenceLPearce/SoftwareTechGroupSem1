@@ -8,7 +8,7 @@ from heap_visualiser import heap_visualiser
 
 
 pygame.init()
-
+pygame.display.set_caption("Algorithm Explorer")
 WIDTH, HEIGHT = config.WIDTH, config.HEIGHT
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 FONT = config.FONT
