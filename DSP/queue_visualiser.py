@@ -29,7 +29,7 @@ def run_queue_visualiser(screen: pygame.Surface, clock: pygame.time.Clock):
     buttons = {
         "Enqueue": pygame.Rect(30, 150, 160, 50),
         "Dequeue": pygame.Rect(30, 230, 160, 50),
-        "Return to Menu": pygame.Rect(30, 550, 250, 50),
+        "Return to Menu": pygame.Rect(30, 520, 250, 50),
     }
 
     running = True

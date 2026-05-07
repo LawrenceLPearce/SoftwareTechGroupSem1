@@ -33,7 +33,7 @@ def run_stack_visualiser(screen: pygame.Surface, clock: pygame.time.Clock):
     buttons = {
         "Push": pygame.Rect(60, 150, 100, 50),
         "Pop": pygame.Rect(60, 230, 100, 50),
-        "Return to Menu": pygame.Rect(60, 550, 250, 50),
+        "Return to Menu": pygame.Rect(60, 500, 250, 50),
     }
 
     running = True

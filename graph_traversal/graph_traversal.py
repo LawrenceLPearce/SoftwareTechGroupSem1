@@ -184,7 +184,7 @@ def run_graph_visualiser(screen: pygame.Surface, clock: pygame.time.Clock):
                             last_order = []
                             last_mode  = None
 
-                        elif name == "Back to Menu":
+                        elif name == "Back":
                             running = False
 
         utilities.fill_screen(screen)
