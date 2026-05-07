@@ -189,6 +189,8 @@ def run_graph_visualiser(screen: pygame.Surface, clock: pygame.time.Clock):
 
         utilities.fill_screen(screen)
         utilities.draw_text("Graph Traversal", (320, 30), screen)
+        utilities.draw_text("1. Select Starting Node", (320, 500), screen)
+        utilities.draw_text("2. Choose a traversal method (BFS or DFS)", (320, 550), screen)
         utilities.draw_buttons(buttons, screen)
 
         # display visited state
