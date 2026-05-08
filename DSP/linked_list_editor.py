@@ -22,7 +22,7 @@ def insert_node(
     index = utilities.text_entry(
         screen, entry_rect, heading_rect,
         heading="Enter index then press ENTER",
-        integer_only=True
+        integer_only=True, draw_shadow=False
     )
 
     if not index: return

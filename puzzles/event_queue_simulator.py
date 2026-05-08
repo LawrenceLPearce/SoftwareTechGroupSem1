@@ -17,7 +17,7 @@ def add_event(
     hour = utilities.text_entry(
         screen, entry_rect, heading_rect,
         heading="Enter hour of event (24 hour time)",
-        integer_only=True
+        integer_only=True, draw_shadow=False
     )
 
     if not hour: 
@@ -26,7 +26,7 @@ def add_event(
     minute = utilities.text_entry(
         screen, entry_rect, heading_rect,
         heading="Enter minute of event",
-        integer_only=True
+        integer_only=True, draw_shadow=False
     )
 
     if not hour: 

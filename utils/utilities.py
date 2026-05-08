@@ -250,7 +250,8 @@ def draw_node_connects(
 
 def text_entry(
         screen: pygame.Surface, entry_rect: pygame.Rect, heading_rect: pygame.Rect,
-        heading: str | None = None, integer_only=False, max_chars: int | None = None
+        heading: str | None = None, integer_only=False, max_chars: int | None = None,
+        draw_shadow: bool = True
     ) -> str | None:
     """
     provides a text box for text entry.
@@ -260,6 +261,7 @@ def text_entry(
     :param heading: (optional) str of what to write in heading
     :param integer_only: (optional) bool whether to only accept number input
     :param max_chars: (optional) maximum number of characters of input
+    :param draw_shadow: (optional) bool whether to draw shadow over screen
     :return: str | None
     """
     if heading is None:
@@ -268,11 +270,12 @@ def text_entry(
         else:
             heading = "Type text then press ENTER (ESC to exit)"
 
-    # draw shadow over whole screen
-    shadow_surf = pygame.Surface((screen.get_width(), screen.get_height()), pygame.SRCALPHA)
-    pygame.draw.rect(shadow_surf, (0, 0, 0, 90),
-                     pygame.Rect(0, 0, screen.get_width(), screen.get_height()))
-    screen.blit(shadow_surf, (0, 0))
+    if draw_shadow:
+        # draw shadow over whole screen
+        shadow_surf = pygame.Surface((screen.get_width(), screen.get_height()), pygame.SRCALPHA)
+        pygame.draw.rect(shadow_surf, (0, 0, 0, 90),
+                        pygame.Rect(0, 0, screen.get_width(), screen.get_height()))
+        screen.blit(shadow_surf, (0, 0))
 
     # draw both rects
     for rect in [entry_rect, heading_rect]:
