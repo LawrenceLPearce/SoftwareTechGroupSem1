@@ -248,8 +248,10 @@ def draw_node_connects(
     pygame.draw.polygon(screen, color, [line_end, left, right])
 
 
-def text_entry(screen: pygame.Surface, entry_rect: pygame.Rect, heading_rect: pygame.Rect,
-               heading: str | None = None, integer_only=False) -> str | None:
+def text_entry(
+        screen: pygame.Surface, entry_rect: pygame.Rect, heading_rect: pygame.Rect,
+        heading: str | None = None, integer_only=False, max_chars: int | None = None
+    ) -> str | None:
     """
     provides a text box for text entry.
     :param screen: pygame.screen
@@ -257,6 +259,7 @@ def text_entry(screen: pygame.Surface, entry_rect: pygame.Rect, heading_rect: py
     :param heading_rect: pygame.Rect for where instructions are displayed
     :param heading: (optional) str of what to write in heading
     :param integer_only: (optional) bool whether to only accept number input
+    :param max_chars: (optional) maximum number of characters of input
     :return: str | None
     """
     if heading is None:
@@ -300,7 +303,10 @@ def text_entry(screen: pygame.Surface, entry_rect: pygame.Rect, heading_rect: py
                 if event.key == pygame.K_BACKSPACE:
                     text = text[:-1]
 
-                elif not integer_only or event.unicode.isdigit():  # check that the input is valid
+                elif (
+                    (not max_chars or max_chars and len(text) < max_chars) # Ensure max chars not exceeded
+                    and (not integer_only or event.unicode.isdigit())  # check that the input is valid
+                ):
                     text += event.unicode
 
                 draw_offset_rect(entry_rect, screen)

@@ -3,6 +3,36 @@ from utils import utilities
 from puzzles.event_queue import Event, EventQueue
 
 
+def add_event(
+        screen: pygame.Surface, entry_rect: pygame.Rect, 
+        heading_rect: pygame.Rect, queue: EventQueue
+    ) -> None:
+    title = utilities.text_entry(
+        screen, entry_rect, heading_rect,
+        heading="Enter event title", max_chars=25
+    )
+ 
+    if not title: return
+
+    hour = utilities.text_entry(
+        screen, entry_rect, heading_rect,
+        heading="Enter hour of event (24 hour time)",
+        integer_only=True
+    )
+
+    if not hour: 
+        return
+    
+    minute = utilities.text_entry(
+        screen, entry_rect, heading_rect,
+        heading="Enter minute of event",
+        integer_only=True
+    )
+
+    if not hour: 
+        return
+
+
 def event_queue_simulator(screen: pygame.Surface, queue: EventQueue):
     utilities.fill_screen(screen)
     utilities.draw_text(
@@ -35,11 +65,11 @@ def run_event_queue_simulator(screen: pygame.Surface, clock: pygame.time.Clock):
 
         match command:
             case "Add Event":
-                utilities.handle_button_click("Insert", buttons, screen)
-                #add_event(screen, entry_rect, heading_rect, queue)
+                utilities.handle_button_click("Add Event", buttons, screen)
+                add_event(screen, entry_rect, heading_rect, queue)
 
-            case "Extract":
-                utilities.handle_button_click("Extract", buttons, screen)
+            case "Remove Upcoming":
+                utilities.handle_button_click("Remove Upcoming", buttons, screen)
                 #extract(screen, queue)
 
             case "Back":
