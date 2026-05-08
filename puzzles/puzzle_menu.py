@@ -2,7 +2,7 @@
 
 import pygame
 from utils import utilities
-from puzzles import path_finder_visualiser
+from puzzles import path_finder_visualiser, event_queue_simulator
 
 
 def puzzle_menu(screen: pygame.Surface):
@@ -28,11 +28,12 @@ def path_finder(screen: pygame.Surface, clock: pygame.time.Clock):
 
 
 def event_queue(screen: pygame.Surface, clock: pygame.time.Clock):
-    pass
+    event_queue_simulator.run_event_queue_simulator(screen, clock)
 
 
 def path_counter(screen: pygame.Surface, clock: pygame.time.Clock):
     pass
+
 
 def coin_simulator(screen: pygame.Surface, clock: pygame.time.Clock):
     pass
