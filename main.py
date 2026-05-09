@@ -5,7 +5,7 @@ from sort_algorithms import sorting_algorithms
 from puzzles import puzzle_menu
 from graph_traversal import graph_traversal
 from heap_visualiser import heap_visualiser
-
+ 
 
 pygame.init()
 pygame.display.set_caption("Algorithm Explorer")
