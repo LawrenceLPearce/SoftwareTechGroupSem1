@@ -10,6 +10,17 @@ NODE_HEIGHT = 30
 HORIZONTAL_OFFSET = 200
 
 
+def hold_frame(duration: int) -> None:
+    """Pauses on frame for given duration."""
+    start_time = pygame.time.get_ticks()
+    pygame.display.flip()
+    while True:
+        current_time = pygame.time.get_ticks()
+
+        if current_time - start_time > duration:
+            return
+
+
 def insert(
         screen: pygame.Surface, entry_rect: pygame.Rect, 
         heading_rect: pygame.Rect, heap: Heap
@@ -36,7 +47,7 @@ def insert(
             break
 
         draw_heap(screen, heap, highlights)
-        utilities.delay_with_exit_detection(400)
+        hold_frame(400)
 
 
 def extract(screen: pygame.Surface, heap: Heap) -> None:
@@ -60,8 +71,7 @@ def extract(screen: pygame.Surface, heap: Heap) -> None:
             break
 
         draw_heap(screen, heap, highlights)
-        utilities.delay_with_exit_detection(400)
-
+        hold_frame(400)
 
 def draw_heap(
         screen: pygame.Surface, heap: Heap, 
