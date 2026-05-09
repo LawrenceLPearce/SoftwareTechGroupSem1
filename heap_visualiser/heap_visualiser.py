@@ -5,7 +5,7 @@ from utils import config
 
 
 # TODO: add comments
-
+ 
 
 ROW_HEIGHT = 70
 NODE_WIDTH = 50
@@ -28,8 +28,7 @@ def insert(
   
     heap_state = heap.animate_insert(int(value))
     highlights = []
-    running = True
-
+    
     while True:
         utilities.fill_screen(screen)
         utilities.draw_text("Heap Visualiser", ((screen.get_width() // 4) + 120, 50), screen)

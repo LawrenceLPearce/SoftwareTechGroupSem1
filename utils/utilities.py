@@ -363,6 +363,7 @@ Uses different styles if communicating error or information.
 
         draw_pop_up()
 
+
 def delay_with_exit_detection(duration):
     """
     Delay for given duration and detect quit button pressed.
