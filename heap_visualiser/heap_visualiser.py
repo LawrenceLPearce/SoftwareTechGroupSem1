@@ -4,9 +4,6 @@ from heap_visualiser.heap import Heap
 from utils import config
 
 
-# TODO: add comments
- 
-
 ROW_HEIGHT = 70
 NODE_WIDTH = 50
 NODE_HEIGHT = 30
@@ -17,13 +14,12 @@ def insert(
         screen: pygame.Surface, entry_rect: pygame.Rect, 
         heading_rect: pygame.Rect, heap: Heap
     ) -> None:
-
+    """Animates and insertion into the heap."""
     value = utilities.text_entry(
         screen, entry_rect, heading_rect,
         heading="Enter numerical value then press ENTER",
         integer_only=True
     )
-
     if not value: return
   
     heap_state = heap.animate_insert(int(value))
@@ -31,30 +27,32 @@ def insert(
     
     while True:
         utilities.fill_screen(screen)
-        utilities.draw_text("Heap Visualiser", ((screen.get_width() // 4) + 120, 50), screen)
-
+        utilities.draw_text(
+            "Heap Visualiser", ((screen.get_width() // 4) + 120, 50), screen
+        )
         try:
             highlights = next(heap_state)
         except StopIteration:
             break
 
         draw_heap(screen, heap, highlights)
-        
-        hold_frame(400)
+        utilities.delay_with_exit_detection(400)
 
 
 def extract(screen: pygame.Surface, heap: Heap) -> None:
+    """Animate the extraction of the heap root."""
     if len(heap) == 0:
         utilities.pop_up_message(screen, "Nothing to extract", error=True)
         return
     
     heap_state = heap.animate_remove()
     highlights = []
-    running = True
-
+   
     while True:
         utilities.fill_screen(screen)
-        utilities.draw_text("Heap Visualiser", ((screen.get_width() // 4) + 120, 50), screen)
+        utilities.draw_text(
+            "Heap Visualiser", ((screen.get_width() // 4) + 120, 50), screen
+        )
 
         try:
             highlights = next(heap_state)
@@ -62,24 +60,14 @@ def extract(screen: pygame.Surface, heap: Heap) -> None:
             break
 
         draw_heap(screen, heap, highlights)
-        
-        hold_frame(500)
-
-
-def hold_frame(duration: int) -> None:
-    start_time = pygame.time.get_ticks()
-    pygame.display.flip()
-    while True:
-        current_time = pygame.time.get_ticks()
-
-        if current_time - start_time > duration:
-            return
+        utilities.delay_with_exit_detection(400)
 
 
 def draw_heap(
         screen: pygame.Surface, heap: Heap, 
         highlights: list[int] | None = None
     ) -> None:
+    """Draws each node in the heap structure."""
     if len(heap) > 0:
         draw_heap_node(
             screen, 0, screen.get_width() / 2 - NODE_WIDTH / 2, 
@@ -92,6 +80,7 @@ def draw_heap_node(
         y: float, offset: float, heap: Heap,
         highlights: list[int] | None = None
     ) -> pygame.Rect:
+    """Recursively draws a node and it's child nodes."""
     node_rect = pygame.Rect(x, y, NODE_WIDTH, NODE_HEIGHT)
 
     if highlights and index in highlights:
@@ -136,6 +125,7 @@ def draw_heap_node(
 
 
 def get_default_heap() -> Heap:
+    """Inserts default values into heap."""
     default_values = [1, 3, 4, 10, 20, 35, 5]
     heap = Heap(size=len(default_values))
 
@@ -146,8 +136,14 @@ def get_default_heap() -> Heap:
 
 
 def heap_visualiser(screen: pygame.Surface, heap: Heap):
+    """
+    Draws elements of heap visualiser, including title, 
+    heap, and button panel.
+    """
     utilities.fill_screen(screen)
-    utilities.draw_text("Heap Visualiser", ((screen.get_width() // 4) + 120, 50), screen)
+    utilities.draw_text(
+        "Heap Visualiser", ((screen.get_width() // 4) + 120, 50), screen
+    )
     buttons = {
         'Insert': pygame.Rect(205, 500, 150, 50),
         'Extract': pygame.Rect(375, 500, 150, 50),
@@ -160,6 +156,7 @@ def heap_visualiser(screen: pygame.Surface, heap: Heap):
 
 
 def run_heap_visualiser(screen: pygame.Surface, clock: pygame.time.Clock):
+    """Runs the pygame event loop for the heap visualiser module."""
     heap = get_default_heap()
     buttons = heap_visualiser(screen, heap)
     command = None
