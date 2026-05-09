@@ -24,7 +24,18 @@ def puzzle_menu(screen: pygame.Surface):
 
 
 def path_finder(screen: pygame.Surface, clock: pygame.time.Clock):
-    path_finder_visualiser.run_sort_menu(screen, clock)
+    path_finder_visualiser.run_sort_menu(screen, clock, buttons={
+        'Set Start': pygame.Rect(10, 100, 190, 50),  # side buttons that control node state
+        'Set End': pygame.Rect(10, 160, 190, 50),
+        'Make Obstacle': pygame.Rect(10, 220, 190, 50),
+        'Clear': pygame.Rect(10, 280, 190, 50),
+
+        'Run!': pygame.Rect(220, 540, 150, 50),  # bottom buttons that control graph
+        'Reset': pygame.Rect(390, 540, 150, 50),
+        'Back': pygame.Rect(560, 540, 150, 50)},
+                                         graph_size=11,
+                                         title_text="A* Algorithm Path Finder",
+                                         description_text="Path can go left, right, up, down.")
 
 
 def event_queue(screen: pygame.Surface, clock: pygame.time.Clock):
@@ -32,7 +43,18 @@ def event_queue(screen: pygame.Surface, clock: pygame.time.Clock):
 
 
 def path_counter(screen: pygame.Surface, clock: pygame.time.Clock):
-    pass
+    path_finder_visualiser.run_sort_menu(screen, clock, buttons={
+        'Set Start': pygame.Rect(10, 100, 190, 50),  # side buttons that control node state
+        'Set End': pygame.Rect(10, 160, 190, 50),
+        'Make Obstacle': pygame.Rect(10, 220, 190, 50),
+        'Clear': pygame.Rect(10, 280, 190, 50),
+
+        'Count Paths': pygame.Rect(220, 540, 150, 50),  # bottom buttons that control graph
+        'Reset': pygame.Rect(390, 540, 150, 50),
+        'Back': pygame.Rect(560, 540, 150, 50)},
+                                         graph_size=5,
+                                         title_text="Count Paths in Grid",
+                                         description_text="Path can go left, right, up or down")
 
 
 def coin_simulator(screen: pygame.Surface, clock: pygame.time.Clock):

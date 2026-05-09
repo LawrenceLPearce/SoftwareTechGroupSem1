@@ -22,8 +22,8 @@ HIGHLIGHT_FOUND_COLOUR = pygame.Color("#34ff66")
 HIGHLIGHT_DELETE_COLOUR = pygame.Color("#C44A4A")
 
 # colours used the Graph simulator
-GRAPH_START_COLOUR = pygame.Color("#c679ff")
-GRAPH_END_COLOUR = pygame.Color("#3aff7e")
+GRAPH_END_COLOUR = pygame.Color("#c679ff")
+GRAPH_START_COLOUR = pygame.Color("#3aff7e")
 GRAPH_OBSTACLE_COLOUR = pygame.Color("#3a1923")
 
 BLOCK_HIGHLIGHT_COLOUR = pygame.Color("#2a65ff")

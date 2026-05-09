@@ -1,5 +1,8 @@
 """This program contains functions to implement and run Graph, allowing users to set node states,
 make obstacle and run a* search."""
+import random
+from typing import Dict
+
 import pygame
 from puzzles.node_graph import Node, Graph
 from utils import utilities, config
@@ -10,17 +13,7 @@ INSTRUCTIONS_RECT = pygame.Rect(150, 50, 600, 25)
 
 # node calculations
 # maximise the columns based on the row count to fill rect.
-graph_max_area = pygame.Rect(50, 75, 800, 450)  # working rect defining the maximum area that the graph can occupy
-NODE_COUNT = 15
-NODE_SIZE = graph_max_area.height // NODE_COUNT  # maximise the size of each node
-graph_area_size = NODE_SIZE * NODE_COUNT + 1  # the new size of the graph area
-GRAPH_RECT = pygame.Rect((config.WIDTH - graph_area_size) // 2,  # the rect within which graph is drawn
-                         75,
-                         graph_area_size,
-                         graph_area_size)
 
-# rectangle where information regarding the current node / mode will be printed
-MODE_INFO_AREA = pygame.Rect(700, 100, 190, 240)
 
 
 def node_clicked(graph: Graph, screen: pygame.Surface, event: pygame.event.Event, node_command):
@@ -92,7 +85,6 @@ def clear_clicked(selected_node: Node, graph: Graph, screen: pygame.Surface):
 def run_astar(graph: Graph, screen: pygame.Surface):
     """validate graph and perform a* search."""
     # check the route is valid
-    print(graph.start_node)
     if graph.start_node is None:
         utilities.pop_up_message(screen, "You must define a start Node", error=True)
         return []
@@ -100,7 +92,7 @@ def run_astar(graph: Graph, screen: pygame.Surface):
     if graph.end_node is None:
         utilities.pop_up_message(screen, "You must define a end Node", error=True)
         return []
-
+    graph.is_running = True
     path = graph.a_star_search()
 
     if path is None:
@@ -111,25 +103,42 @@ def run_astar(graph: Graph, screen: pygame.Surface):
 
     return path
 
+def count_paths(graph: Graph, description_rect):
+    buttons = {"Cancel": pygame.Rect((config.WIDTH -200), 100, 100, 50)}
 
-def run_sort_menu(screen: pygame.Surface, clock: pygame.time.Clock):
+    total_routes, path = graph.run_route_count(buttons=buttons,
+                                               counter_rect=description_rect)
+
+    return path, f"Total routes: {total_routes}"
+
+
+def run_sort_menu(screen: pygame.Surface, clock: pygame.time.Clock, buttons:Dict, graph_size, title_text, description_text):
+    graph_max_area = pygame.Rect(50, 75, 800, 450)  # working rect defining the maximum area that the graph can occupy
+
+    node_size = graph_max_area.height // graph_size  # maximise the size of each node
+    graph_area_size = node_size * graph_size + 1  # the new size of the graph area
+    graph_rect = pygame.Rect((config.WIDTH - graph_area_size) // 2,  # the rect within which graph is drawn
+                             75,
+                             graph_area_size,
+                             graph_area_size)
+
+
+
+    # rectangle where information regarding the current node / mode will be printed
+    MODE_INFO_AREA = pygame.Rect(700, 100, 190, 240)
     running = True
 
     # initialise the graph
-    graph = Graph(NODE_COUNT, NODE_COUNT, NODE_SIZE, screen, GRAPH_RECT, h_offset=GRAPH_RECT.left,
-                  v_offset=GRAPH_RECT.top)
+    graph = Graph(graph_size, graph_size, node_size, screen, graph_rect, h_offset=graph_rect.left,
+                  v_offset=graph_rect.top)
     graph.set_start_node(graph.get_node(0, 0))
-    graph.set_end_node(graph.get_node(0, 0))
+    graph.set_end_node(graph.get_node(-1, -1))
+    # add three random obsticles
+    for i in range(3):
 
-    buttons = {
-        'Set Start': pygame.Rect(10, 100, 190, 50),  # side buttons that control node state
-        'Set End': pygame.Rect(10, 160, 190, 50),
-        'Make Obstacle': pygame.Rect(10, 220, 190, 50),
-        'Clear': pygame.Rect(10, 280, 190, 50),
+        graph.get_node(random.randint(1, graph_size-2), random.randint(1, graph_size-2)).set_obstacle_true()
 
-        'Run!': pygame.Rect(220, 540, 150, 50),  # bottom buttons that control graph
-        'Reset': pygame.Rect(390, 540, 150, 50),
-        'Back': pygame.Rect(560, 540, 150, 50)}
+
 
     command = None  # overall graph controls
     node_command = None  # controlled by side buttons, manage the nodes
@@ -147,9 +156,8 @@ def run_sort_menu(screen: pygame.Surface, clock: pygame.time.Clock):
 
             elif event.type == pygame.MOUSEBUTTONDOWN and command is None:
                 # check if a node was clicked first
-                if GRAPH_RECT.collidepoint(event.pos):
+                if graph_rect.collidepoint(event.pos):
                     selected_node, node_command = node_clicked(graph, screen, event, node_command)
-                    print(selected_node)
 
                 for name, rect in buttons.items():  # check if buttons were clicked
                     if rect.collidepoint(event.pos):
@@ -159,7 +167,7 @@ def run_sort_menu(screen: pygame.Surface, clock: pygame.time.Clock):
             utilities.handle_button_click(command, buttons, screen)
 
             match command:
-                # control commands
+                # control commands for A*
                 case 'Run!':
                     node_command = None
                     selected_node = None
@@ -168,14 +176,14 @@ def run_sort_menu(screen: pygame.Surface, clock: pygame.time.Clock):
                     node_command = None
                     selected_node = None
                     found_path = []
-                    graph = Graph(NODE_COUNT, NODE_COUNT, NODE_SIZE, screen, GRAPH_RECT, h_offset=GRAPH_RECT.left,
-                                  v_offset=GRAPH_RECT.top)
+                    graph = Graph(graph_size, graph_size, node_size, screen, graph_rect, h_offset=graph_rect.left,
+                                  v_offset=graph_rect.top)
                     graph.set_start_node(graph.grid[0][0])
                     graph.set_end_node(graph.grid[-1][-1])
                 case 'Back':
                     return
 
-                # node commands
+                # node commands (used in both menus)
                 case 'Set Start':
                     node_command = set_start_clicked(selected_node, graph, screen)
                     selected_node = None
@@ -188,11 +196,17 @@ def run_sort_menu(screen: pygame.Surface, clock: pygame.time.Clock):
                 case 'Clear':
                     node_command = clear_clicked(selected_node, graph, screen)
 
+                # count command (used in counting menu)
+                case 'Count Paths':
+                    utilities.draw_text_in_rect("Current Mode: \n Count", MODE_INFO_AREA, screen)
+                    found_path, description_text = count_paths(graph, INSTRUCTIONS_RECT)
+
+
         command = None
 
         # wipe screen and draw everything
         utilities.fill_screen(screen)
-        utilities.draw_text_in_rect("A* Grid Search", pygame.Rect(0, 20, screen.get_width(), 20), screen)
+        utilities.draw_text_in_rect(title_text, pygame.Rect(0, 20, screen.get_width(), 20), screen)
 
         # display node stats / current mode info
         if node_command is not None:
@@ -203,7 +217,7 @@ def run_sort_menu(screen: pygame.Surface, clock: pygame.time.Clock):
             text = ""
 
         utilities.draw_text_in_rect(text, MODE_INFO_AREA, screen)
-        utilities.draw_text_in_rect("Up, down, left, right, NO diagonals", INSTRUCTIONS_RECT, screen)
+        utilities.draw_text_in_rect(description_text, INSTRUCTIONS_RECT, screen)
 
         graph.draw_graph(highlighted_nodes=[selected_node])
 
@@ -214,11 +228,22 @@ def run_sort_menu(screen: pygame.Surface, clock: pygame.time.Clock):
         clock.tick(30)
 
 
+
+
 def main():
     """Launch the graph"""
     screen = pygame.display.set_mode((config.WIDTH, config.HEIGHT))
     clock = pygame.time.Clock()
-    run_sort_menu(screen, clock)
+    run_sort_menu(screen, clock, buttons = {
+        'Set Start': pygame.Rect(10, 100, 190, 50),  # side buttons that control node state
+        'Set End': pygame.Rect(10, 160, 190, 50),
+        'Make Obstacle': pygame.Rect(10, 220, 190, 50),
+        'Clear': pygame.Rect(10, 280, 190, 50),
+
+        'Count Paths': pygame.Rect(220, 540, 150, 50),  # bottom buttons that control graph
+        'Reset': pygame.Rect(390, 540, 150, 50),
+        'Back': pygame.Rect(560, 540, 150, 50)}, graph_size=5, title_text="Count Paths in Grid",
+                  description_text="Path can go left, right, up or down")
 
 
 if __name__ == '__main__':

@@ -1,6 +1,8 @@
 """this module contains the Node class and Graph class. The Graph class implements the Node class by containing a list
 of them. The Graph class contains several methods, for drawing with pygame, animation, and
 an a* algorithm implementation."""
+import random
+
 import pygame
 
 from utils import config, utilities
@@ -90,6 +92,9 @@ class Graph:
 
         self.headless = headless
 
+        self.total_routes = 0
+        self.is_running = False
+
     def get_node(self, r, c):
         """return a Node instance at the given coordinates"""
         return self.grid[r][c]
@@ -174,9 +179,10 @@ class Graph:
 
         node_list.insert(low, node)
 
-    def draw_graph(self, highlighted_nodes: list[Node] = None):
+    def draw_graph(self, highlighted_nodes: list[Node] = None, buttons=None, speed=0):
         """draw every node in the graph. Change node colour to match state."""
         pygame.draw.rect(self.screen, 'light gray', self.background_rect, border_radius=10)
+        text=""
         if highlighted_nodes is None:
             highlighted_nodes = []
 
@@ -184,17 +190,36 @@ class Graph:
             for node in col:
                 if node in highlighted_nodes:
                     colour = config.HIGHLIGHT_COLOUR
+                    text=""
                 elif node.is_obstacle:
                     colour = config.GRAPH_OBSTACLE_COLOUR
                 elif node.is_start:
                     colour = config.GRAPH_START_COLOUR
+                    text = "S"
                 elif node.is_end:
                     colour = config.GRAPH_END_COLOUR
+                    text="E"
                 else:
                     colour = config.SECONDARY_COLOUR
+                    text=""
 
                 utilities.draw_button_shadow(node.rect, self.screen)
                 pygame.draw.rect(self.screen, colour, node.rect, border_radius=10)
+                utilities.draw_text_in_rect(text, node.rect, self.screen)
+
+        # detect cancel pressed
+        if buttons:
+            # wipe button background
+            for rect in buttons.values():
+                pygame.draw.rect(self.screen, config.BACKGROUND_COLOUR, rect)
+            utilities.draw_buttons(buttons, self.screen, colour=config.ERROR_COLOUR)
+            pygame.display.flip()
+            command = utilities.delay_with_exit_detection(speed, buttons=buttons)
+            if command is not None:
+                utilities.handle_button_click(command, buttons, self.screen, colour=config.ERROR_COLOUR)
+            if command == "Cancel":
+                self.is_running = False
+
 
     def connect_nodes(self, first_node: Node, second_node: Node):
         """Draw red line between two given nodes. If either node is start or end, draw circle in it."""
@@ -242,6 +267,9 @@ class Graph:
 
     def a_star_search(self):
         """perform a* search on graph. Return Path."""
+        if not self.is_running:
+            return [] # search has been cancelled
+
         open_list: list[Node] = [self.start_node]
         closed_list: list[Node] = []
 
@@ -287,3 +315,80 @@ class Graph:
             pygame.display.flip()
 
         return None
+
+
+    def count_all_routes(self, current_node: Node, closed_set: set[Node], buttons=None, counter_rect=None):
+        if not self.is_running: # count was cancelled
+            return
+
+        self.draw_graph(list(closed_set), buttons=buttons)
+        if counter_rect is not None:
+            utilities.draw_text_in_rect(f"Total Paths: {self.total_routes}", counter_rect, self.screen, clear=True)
+
+        pygame.display.flip()
+        for node in current_node.neighbours:
+            if node in closed_set or node.is_obstacle:
+                continue
+            elif node.is_end:
+                self.total_routes += 1
+            else:
+                closed_set.add(current_node)
+                self.count_all_routes(node, closed_set, buttons=buttons, counter_rect=counter_rect)
+                closed_set.remove(current_node)  # backtrack
+
+
+        # copy list
+        # go to all neighbors that are not in closed_list
+        # if all are in closed list, then return 0
+        # if node is obstical, add it to closed list
+        # if node is end node, return 1
+
+    def run_route_count(self, buttons=None, counter_rect=None):
+        self.is_running = True
+        self.total_routes = 0
+        start_set = {self.start_node}
+        self.count_all_routes(self.start_node, start_set, buttons=buttons, counter_rect=counter_rect)
+
+        if self.total_routes > 0:
+            # animate a path
+            path = self.random_route(self.start_node, start_set) + [self.end_node]
+            self.animate_node_path(path)
+        else:
+            path = []
+        return self.total_routes, path
+
+    def random_route(self, current_node: Node, closed_set: set[Node]) -> list[Node] | None:
+        """find a random route"""
+        neighbours = list(current_node.neighbours)
+        random.shuffle(neighbours)
+
+        for node in neighbours:
+            if node in closed_set or node.is_obstacle:
+                continue
+            elif node.is_end:
+                return [current_node, node]
+
+            closed_set.add(current_node)
+            result = self.random_route(node, closed_set)
+            closed_set.remove(current_node)
+
+            if result:
+                return [current_node] + result
+
+        return None  # dead end, backtrack
+
+
+def main():
+    pygame.init()
+    screen = pygame.display.set_mode((800, 600))
+    graph = Graph(5, 5, 4, screen, pygame.rect.Rect(0, 0, 800, 600))
+
+    graph.set_start_node(graph.get_node(0, 0))
+    graph.set_end_node(graph.get_node(-1, -1))
+    starting_set: set = {graph.start_node}
+    graph.run_route_count()
+    print(graph.total_routes)
+
+
+if __name__ == '__main__':
+    main()

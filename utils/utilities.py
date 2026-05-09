@@ -92,14 +92,15 @@ def draw_button_shadow(rect, screen, radius=10, offset=3):
     screen.blit(shadow_surf, (shadow_rect.x, shadow_rect.y))
 
 
-def draw_button_pressed(rect, screen, radius=10, offset=3):
+def draw_button_pressed(rect, screen, radius=10, offset=3, colour=SECONDARY_COLOUR_SHADOW):
     """
     Makes a button look like it is pressed by adding an internal shadow.
     :param rect: button rect
     :param screen: screen
     :param radius: (optional) corner radius
     :param offset: (optional) shadow offset
-    :return:
+    :param colour: (optional) colour of the button
+    :return: None
     """
 
     # put shadow in top left to make it look indented
@@ -107,27 +108,29 @@ def draw_button_pressed(rect, screen, radius=10, offset=3):
     pygame.draw.rect(shadow_surf, (0, 0, 0, 50),
                      pygame.Rect(0, 0, rect.width, rect.height),
                      border_radius=radius)
-    pygame.draw.rect(shadow_surf, SECONDARY_COLOUR_SHADOW,  # darker fill
+    pygame.draw.rect(shadow_surf, colour,  # darker fill
                      pygame.Rect(offset, offset, rect.width - offset, rect.height - offset),
                      border_radius=radius)
     screen.blit(shadow_surf, (rect.x, rect.y))
 
 
-def draw_buttons(buttons, screen):
+def draw_buttons(buttons, screen, colour=SECONDARY_COLOUR):
     """
     function that adds buttons to the screen. Call after filling screen.
+
     :param buttons: Dict {'text', pygame.Rect(coordinates etc)}
     :param screen: pygame.screen
+    :param colour: optional, the colour of the button
     :return: None
     """
     for text, rect in buttons.items():
         draw_button_shadow(rect, screen)
-        pygame.draw.rect(screen, pygame.Color(SECONDARY_COLOUR), rect, border_radius=10)
+        pygame.draw.rect(screen, colour, rect, border_radius=10)
         draw_text_in_rect(text, rect, screen)
         #draw_text(text, (rect.x + 20, rect.y + 10), screen)
 
 
-def handle_button_click(button_text, buttons, screen):
+def handle_button_click(button_text, buttons, screen, colour=SECONDARY_COLOUR_SHADOW):
     """
     Waits until mouse is released. Draws button in inverted mode to make it look like it is inverted
     :param button_text: button key
@@ -138,7 +141,7 @@ def handle_button_click(button_text, buttons, screen):
     rect = buttons[button_text]  # get correct button
 
     # draw pressed button
-    draw_button_pressed(rect, screen)
+    draw_button_pressed(rect, screen, colour=colour)
     #draw_text(button_text, (rect.x + 20 + 2, rect.y + 10 + 2), screen)  # shift text down
     draw_text_in_rect(button_text, rect, screen, v_offset=2)
     pygame.display.flip()
@@ -364,12 +367,16 @@ Uses different styles if communicating error or information.
         draw_pop_up()
 
 
-def delay_with_exit_detection(duration):
+def delay_with_exit_detection(duration, buttons=None):
     """
     Delay for given duration and detect quit button pressed.
+
     :param duration: length of time in milliseconds to delay for
+    :param buttons: dict containing buttons that can be pressed.
     :return: None
     """
+    if buttons is None:
+        buttons = {}
     start_time = pygame.time.get_ticks()
 
     while True:
@@ -378,7 +385,12 @@ def delay_with_exit_detection(duration):
         if current_time - start_time > duration:
             break
 
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                pygame.quit()
-                return
+        if buttons:
+            event = handle_events(buttons, None)
+            if event == "Cancel":
+                return event
+        else:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    return None
