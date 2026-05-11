@@ -14,6 +14,10 @@ def add_event(
         screen: pygame.Surface, entry_rect: pygame.Rect, 
         heading_rect: pygame.Rect, queue: EventQueue
     ) -> None:
+    """
+    Prompts user for event title, time, and priority, then animates 
+    insertion into priority queue.
+    """
     title = utilities.text_entry(
         screen, entry_rect, heading_rect,
         heading="Enter title of event", max_chars=25
@@ -67,37 +71,189 @@ def add_event(
     event = Event(
         hour=hour, minute=minute, priority=priority, title=title
     )
-    queue.insert(event)
+
+    queue_state = queue.animate_insert(event)
+    highlights = []
+    
+    while True:
+        utilities.fill_screen(screen)
+        utilities.draw_text(
+            "Event Queue Simulator", ((screen.get_width() // 4) + 90, 30), screen
+        )
+        try:
+            highlights = next(queue_state)
+        except StopIteration:
+            break
+
+        draw_event_queue(screen, queue, highlights) # type: ignore
+        hold_frame(450)
 
 
-def draw_event_list(screen: pygame.Surface, queue: EventQueue) -> None:
-    height = 60 + (100 * min(len(queue), 3))
+def extract_event(screen: pygame.Surface, queue: EventQueue) -> None:
+    """
+    Animates the extraction of the next event / priority queue root.
+    """
+    if len(queue) == 0:
+        utilities.pop_up_message(screen, "Nothing to extract", error=True)
+        return
+    
+    queue_state = queue.animate_extract()
+    highlights = []
+   
+    while True:
+        utilities.fill_screen(screen)
+        utilities.draw_text(
+            "Event Queue Simulator", ((screen.get_width() // 4) + 90, 30), screen
+        )
+        try:
+            highlights = next(queue_state)
+        except StopIteration:
+            break
+        
+        draw_event_queue(screen, queue, highlights)
+        hold_frame(450)
+    
+    draw_event_queue(screen, queue)
+    utilities.pop_up_message(
+        screen, f"Extracted '{highlights[0][0].title}'" # type:ignore
+    )
+    
 
-    # Draw background rectangle
-    rect = pygame.Rect(20, 100, 230, height)
-    pygame.draw.rect(screen, config.SECONDARY_COLOUR, rect, border_radius=10)
+def hold_frame(duration: int) -> None:
+    """Pauses on frame for given duration."""
+    start_time = pygame.time.get_ticks()
+    pygame.display.flip()
+    while True:
+        current_time = pygame.time.get_ticks()
 
-    utilities.draw_text("Upcoming:", (30, 100), screen)
+        if current_time - start_time > duration:
+            return
 
 
-def draw_event_queue(screen: pygame.Surface, queue: EventQueue) -> None:
+def open_event_list(
+        screen: pygame.Surface, clock: pygame.time.Clock, 
+        queue: EventQueue
+    ) -> None:
+    """Opens list showing up to three upcoming events."""
+    # draw shadow over whole screen
+    shadow_surf = pygame.Surface(
+        (screen.get_width(), screen.get_height()), pygame.SRCALPHA
+    )
+    pygame.draw.rect(
+        shadow_surf, (0, 0, 0, 90),
+        pygame.Rect(0, 0, screen.get_width(), screen.get_height())
+    )
+    screen.blit(shadow_surf, (0, 0))
+
+    command = None
+    while True:
+        buttons = draw_event_list(screen, queue)
+
+        pygame.display.flip()
+
+        command = utilities.handle_events(buttons, None)
+
+        if command == "X":
+            utilities.handle_button_click(
+                "X", buttons, screen, colour=config.ERROR_COLOUR_DARK
+            )
+            return
+
+        clock.tick(30)
+
+
+def draw_event_list(
+        screen: pygame.Surface, queue: EventQueue
+    ) -> dict[str, pygame.Rect]:
+    """Draws the event list."""
+    # Count events, max of 3 displayed
+    count = min(len(queue), 3)
+    height = 65 + (90 * count)
+
+    # Background
+    rect = pygame.Rect(275, 100, 350, height)
+    pygame.draw.rect(
+        screen, config.SECONDARY_COLOUR, rect, border_radius=10
+    )
+    
+    # Close button
+    buttons = {'X': pygame.Rect(580, 110, 35, 35)}
+    utilities.draw_buttons(buttons, screen, colour=config.ERROR_COLOUR)
+
+    # Title
+    utilities.draw_text("Upcoming Events:", (300, 120), screen)
+
+    for i in range(count):
+        event = queue.get(i)
+
+        if event is None: 
+            continue
+
+        y = 160 + (i * 90)
+
+        # Event card
+        event_rect = pygame.Rect(295, y, 310, 75)
+        pygame.draw.rect(
+            screen, pygame.Color("white"), event_rect, border_radius=8
+        )
+
+        # Time label
+        utilities.draw_text(
+            f"{event.hour:02}:{event.minute:02}", (300, y + 8), screen
+        )
+
+        # Priority label
+        utilities.draw_text(
+            f"Priority: {event.priority}", (440, y + 8), screen
+        )
+
+        # Title label
+        title = event.title
+        if len(title) > 20:
+            title = event.title[:15] + "..."
+        utilities.draw_text(
+            title, (300, y + 40), screen
+        )
+
+    return buttons
+
+
+def draw_event_queue(
+        screen: pygame.Surface, queue: EventQueue, 
+        highlights: tuple[list, str] | None = None
+    ) -> None:
+    """Draws nodes in priority queue structure."""
     if len(queue) > 0:
         draw_event_node(
             screen, 0, screen.get_width() / 2 - NODE_WIDTH / 2, 
-            100, HORIZONTAL_OFFSET, queue
+            100, HORIZONTAL_OFFSET, queue, highlights
         )
 
 
 def draw_event_node(
-        screen: pygame.Surface, index: int, 
-        x: float, y: float, offset: float, queue: EventQueue
+        screen: pygame.Surface, index: int, x: float, 
+        y: float, offset: float, queue: EventQueue,
+        highlights: tuple[list, str] | None = None
     ) -> pygame.Rect:
+    """Draws node and recusively draws nodes children."""
     # Get event
     event = queue.get(index)
 
+    outer_color = config.SECONDARY_COLOUR
+    inner_color = pygame.Color("white")
+
+    if highlights and index in highlights[0]:
+        # Highlight inner or outer rectangle 
+        # depending on what is being compared
+        comparision = highlights[1]
+        if comparision == "time":
+            outer_color = config.HIGHLIGHT_COLOUR
+        elif comparision == "priority":
+            inner_color = config.HIGHLIGHT_COLOUR
+
     # Outer rectangle
     node_rect = pygame.Rect(x, y, NODE_WIDTH, NODE_HEIGHT)
-    pygame.draw.rect(screen, config.SECONDARY_COLOUR, node_rect, border_radius=10)
+    pygame.draw.rect(screen, outer_color, node_rect, border_radius=10)
 
     # Time label
     min = str(event.minute) if event else "00"
@@ -105,15 +261,18 @@ def draw_event_node(
         min = "0" + min # Leading zero format for minutes (e.g. 12:05)
 
     utilities.draw_text_in_rect(
-        f"{event.hour}:{min}", node_rect, screen, v_offset=-15 # type: ignore
+        f"{event.hour}:{min}", node_rect, screen, # type: ignore
+        v_offset=-15 
     )
 
     # Inner rectangle
     rect = pygame.Rect(x+7, y+33, 60, 25)
-    pygame.draw.rect(screen, pygame.Color("white"), rect, border_radius=5)
+    pygame.draw.rect(screen, inner_color, rect, border_radius=5)
 
     # Priority label
-    utilities.draw_text_in_rect(str(event.priority), rect, screen) # type: ignore
+    utilities.draw_text_in_rect(
+        str(event.priority), rect, screen # type: ignore
+    ) 
 
     # Get indices of children of node
     left = queue.leftChild(index)   
@@ -125,7 +284,8 @@ def draw_event_node(
         new_y = y + ROW_HEIGHT
         # Halve offset to avoid overlapping
         new_node = draw_event_node(
-            screen, left, new_x, new_y, offset / 2, queue
+            screen, left, new_x, new_y, offset / 2, 
+            queue, highlights
         )
         utilities.draw_node_connects(
             screen, node_rect, new_node, 
@@ -136,7 +296,8 @@ def draw_event_node(
         new_x = x + offset
         new_y = y + ROW_HEIGHT
         new_node = draw_event_node(
-            screen, right, new_x, new_y, offset / 2, queue
+            screen, right, new_x, new_y, offset / 2, 
+            queue, highlights
         )
         utilities.draw_node_connects(
             screen, node_rect, new_node, 
@@ -146,7 +307,13 @@ def draw_event_node(
     return node_rect
 
 
-def event_queue_simulator(screen: pygame.Surface, queue: EventQueue):
+def event_queue_simulator(
+        screen: pygame.Surface, queue: EventQueue
+    ) -> dict[str, pygame.Rect]:
+    """
+    Draws elements of event queue simulator, including title, 
+    event queue, and button panel.
+    """
     utilities.fill_screen(screen)
     utilities.draw_text(
         "Event Queue Simulator", ((screen.get_width() // 4) + 90, 30), screen
@@ -160,11 +327,18 @@ def event_queue_simulator(screen: pygame.Surface, queue: EventQueue):
     utilities.draw_buttons(buttons, screen)
     
     draw_event_queue(screen, queue)
+
     pygame.display.flip()
+
     return buttons
 
 
-def run_event_queue_simulator(screen: pygame.Surface, clock: pygame.time.Clock):
+def run_event_queue_simulator(
+        screen: pygame.Surface, clock: pygame.time.Clock
+    ) -> None:
+    """
+    Runs the pygame event loop for the heap visualiser module.
+    """
     queue = EventQueue()
     buttons = event_queue_simulator(screen, queue)
     command = None
@@ -185,10 +359,11 @@ def run_event_queue_simulator(screen: pygame.Surface, clock: pygame.time.Clock):
 
             case "Remove Upcoming":
                 utilities.handle_button_click("Remove Upcoming", buttons, screen)
-                #extract(screen, queue)
+                extract_event(screen, queue)
 
             case "See Events":
                 utilities.handle_button_click("See Events", buttons, screen)
+                open_event_list(screen, clock, queue)
 
             case "Back":
                 utilities.handle_button_click("Back", buttons, screen)

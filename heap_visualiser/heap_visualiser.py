@@ -166,7 +166,9 @@ def heap_visualiser(screen: pygame.Surface, heap: Heap):
 
 
 def run_heap_visualiser(screen: pygame.Surface, clock: pygame.time.Clock):
-    """Runs the pygame event loop for the heap visualiser module."""
+    """
+    Runs the pygame event loop for the heap visualiser module.
+    """
     heap = get_default_heap()
     buttons = heap_visualiser(screen, heap)
     command = None

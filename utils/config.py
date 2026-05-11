@@ -13,6 +13,7 @@ WIDTH, HEIGHT = 900, 600
 BACKGROUND_COLOUR = pygame.Color("#F5F0EB")
 TEXT_COLOUR = pygame.Color("Black")
 ERROR_COLOUR = pygame.Color("#C44A4A")  # For error messages
+ERROR_COLOUR_DARK = pygame.Color("#A53636") 
 SECONDARY_COLOUR = pygame.Color("#7EC8A4")  # also used for buttons
 SECONDARY_COLOUR_SHADOW = pygame.Color("#6DB893")
 NODE_COLOUR = pygame.Color("#53ffdd")
