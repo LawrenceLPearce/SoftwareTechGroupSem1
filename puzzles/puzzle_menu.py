@@ -2,8 +2,7 @@
 
 import pygame
 from utils import utilities
-from puzzles import path_finder_visualiser, event_queue_simulator
-
+from puzzles import path_finder_visualiser, event_queue_simulator, coin_change
 
 def puzzle_menu(screen: pygame.Surface):
     """return button dict for puzzle menu and draw buttons on screen."""
@@ -15,7 +14,7 @@ def puzzle_menu(screen: pygame.Surface):
         'Path Finder': pygame.Rect(left_lineup, 150, 250, 50),
         'Event Queue': pygame.Rect(left_lineup, 230, 250, 50),
         'Path Counter': pygame.Rect(left_lineup, 310, 250, 50),
-        '[coin thing]': pygame.Rect(left_lineup, 390, 250, 50),
+        'Coin Change': pygame.Rect(left_lineup, 390, 250, 50),
         'Back to main menu': pygame.Rect(left_lineup, 470, 250, 50),
     }
     utilities.draw_buttons(buttons, screen)
@@ -58,7 +57,7 @@ def path_counter(screen: pygame.Surface, clock: pygame.time.Clock):
 
 
 def coin_simulator(screen: pygame.Surface, clock: pygame.time.Clock):
-    pass
+    coin_change.run_coin_change(screen, clock)
 
 
 def run_puzzle_menu(screen: pygame.Surface, clock: pygame.time.Clock):
@@ -80,7 +79,7 @@ def run_puzzle_menu(screen: pygame.Surface, clock: pygame.time.Clock):
                     event_queue(screen, clock)
                 case 'Path Counter':
                     path_counter(screen, clock)
-                case '[coin thing]':
+                case 'Coin Change':
                     coin_simulator(screen, clock)
                 case 'Back to main menu':
                     running = False
