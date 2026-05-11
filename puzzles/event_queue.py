@@ -17,8 +17,10 @@ class EventQueue:
     Priority queue implemented using Heap data structure.
     """
     def __init__(self) -> None:
-        self._heap = Heap()
-    
+        self._heap = Heap(
+            key=lambda e: (-e.hour, -e.minute, -e.priority)
+        )
+        
     def get(self, index: int) -> Event | None:
         """Returns queue item at given index."""
         return self._heap._arr[index]
@@ -35,6 +37,14 @@ class EventQueue:
         """Returns number of items stored in heap."""
         return len(self._heap)
     
+    def insert(self, event: Event) -> None:
+        """Inserts event into priority queue."""
+        self._heap.insert(event)
+    
+    def remove(self) -> None:
+        """Removes root of priority queue."""
+        self._heap.remove()
+
     def animate_insert(self, event: Event):
         """
         Inserts event at bottom and sifts up, yielding at
