@@ -1,5 +1,6 @@
-# visualiser for the queue. similar to stack visualiser, may touch up visuals but for now this is the basic setup
-# code inspired by stack_visualiser, also used code from Task 1.3 in the Week 10 tutorial sheet. Adjusted for queue format
+"""visualiser for the queue. similar to stack visualiser.
+code inspired by stack_visualiser, also used code from Task 1.3 in the Week 10 tutorial sheet.
+Adjusted for queue format """
 import pygame
 from utils import utilities, config
 from DSP.queue_script import Queue

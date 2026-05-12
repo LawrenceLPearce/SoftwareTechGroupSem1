@@ -1,3 +1,4 @@
+"""Visualises the Linked List implementation."""
 import pygame
 from utils import utilities, config
 from DSP.linked_list import LinkedList

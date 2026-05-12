@@ -1,0 +1,1 @@
+"""This module contains all programs for the puzzles subsection"""

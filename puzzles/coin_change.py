@@ -1,5 +1,7 @@
-# based on https://www.geeksforgeeks.org/dsa/coin-change-dp-7/
-# Visualisation approach inspired by task_3_3.py (ST2 Week 12 Tutorial)
+"""A coin change visualiser.
+based on https://www.geeksforgeeks.org/dsa/coin-change-dp-7/
+Visualisation approach inspired by task_3_3.py (ST2 Week 12 Tutorial)
+"""
 
 import pygame
 import pygame.time

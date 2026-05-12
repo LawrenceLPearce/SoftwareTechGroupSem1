@@ -1,3 +1,4 @@
+"""This file provides the interactive program to explore BST."""
 from DSP.binary_search_tree import BST
 import pygame
 from utils import utilities, config
@@ -57,7 +58,7 @@ def draw_tree(screen, node, positions, font=config.FONT, highlight_val=None,
               highlight_colour=highlight_colour)
 
 
-# TODO: Better Comments
+
 
 def tree_animation(bst: BST, order_list: list, screen: pygame.Surface, duration: int = 500,
                    highlight_col=config.HIGHLIGHT_COLOUR, final_highlight_col=config.HIGHLIGHT_COLOUR):
@@ -65,7 +66,7 @@ def tree_animation(bst: BST, order_list: list, screen: pygame.Surface, duration:
     for node_val in order_list:
 
         utilities.fill_screen(screen)
-        utilities.draw_text("Binary Search Tree", ((screen.get_width() // 4) + 30, 30), screen)
+        utilities.draw_text_in_rect("Binary Search Tree", pygame.Rect(0, 20, screen.get_width(), 20), screen)
 
         if node_val == order_list[-1]:
             draw_tree(screen, bst.root, calc_positions(bst.root), highlight_val=node_val,
@@ -120,11 +121,12 @@ def delete_node(bst, val: int | str | None, screen: pygame.Surface):
 
 
 def search_node(bst: BST, val: int | str | None, screen: pygame.Surface):
+    """attempt to find given value in the bst tree, and run animation."""
     if val is None:
         return None, None
     else:
         val = int(val)
-    """attempt to find given value in the bst tree, and run animation."""
+
     found, order = run_search_animation(bst, val, screen)
 
     if not found: return None

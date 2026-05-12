@@ -1,3 +1,4 @@
+"""Provides classes for Linked List implementation, and the corresponding Node. """
 class Node:
     def __init__(self, data):
         self.data = data

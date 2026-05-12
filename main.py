@@ -1,3 +1,4 @@
+"""The main program that launches menu and connects all sections."""
 import pygame
 from utils import utilities, config
 from DSP import dsp_playground

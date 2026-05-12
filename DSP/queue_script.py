@@ -1,4 +1,5 @@
-# I named the file 'queue_script' instead of 'queue' coz python doesn't like that. #test
+"""Minimal queue implementation. Python file is named queue_script.py to avoid overriding built in python library"""
+
 from collections import deque
 
 

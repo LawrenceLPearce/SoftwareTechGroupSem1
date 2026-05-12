@@ -95,6 +95,15 @@ class Graph:
         self.total_routes = 0
         self.is_running = False
 
+    def __str__(self):
+        string = ""
+
+        for c in self.grid:
+            for node in c:
+                string = f"{string} \n {node}"
+
+        return string
+
     def get_node(self, r, c):
         """return a Node instance at the given coordinates"""
         return self.grid[r][c]
@@ -264,9 +273,25 @@ class Graph:
 
         # invert path and return
         return path[::-1]
+    def clear_node_states(self):
+        """clear all node states that relate to a* search / heuristics"""
+        for row in self.grid:
+            for node in row:
+                node.parent = None
+                node.g = float('inf')
+                node.h = 0
+                node.f = float('inf')
 
     def a_star_search(self):
         """perform a* search on graph. Return Path."""
+        # Reset all node state before search
+        for row in self.grid:
+            for node in row:
+                node.parent = None
+                node.g = float('inf')
+                node.h = 0
+                node.f = float('inf')
+
         if not self.is_running:
             return [] # search has been cancelled
 
@@ -283,8 +308,6 @@ class Graph:
 
             if current_node.is_end:  # goal found
                 return self.reconstruct_path()
-
-            # print(str(current_node))
 
             # move node to other list
             open_list.pop(0)
@@ -321,11 +344,12 @@ class Graph:
         if not self.is_running: # count was cancelled
             return
 
-        self.draw_graph(list(closed_set), buttons=buttons)
-        if counter_rect is not None:
-            utilities.draw_text_in_rect(f"Total Paths: {self.total_routes}", counter_rect, self.screen, clear=True)
+        if not self.headless:
+            self.draw_graph(list(closed_set), buttons=buttons)
+            if counter_rect is not None:
+                utilities.draw_text_in_rect(f"Total Paths: {self.total_routes}", counter_rect, self.screen, clear=True)
 
-        pygame.display.flip()
+            pygame.display.flip()
         for node in current_node.neighbours:
             if node in closed_set or node.is_obstacle:
                 continue
@@ -352,7 +376,9 @@ class Graph:
         if self.total_routes > 0:
             # animate a path
             path = self.random_route(self.start_node, start_set) + [self.end_node]
-            self.animate_node_path(path)
+            if not self.headless:
+                self.animate_node_path(path)
+
         else:
             path = []
         return self.total_routes, path

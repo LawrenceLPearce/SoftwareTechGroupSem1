@@ -1,3 +1,4 @@
+"""Heap implementation."""
 def identity(x):
     return x
 

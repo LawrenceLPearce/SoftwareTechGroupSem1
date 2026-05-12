@@ -1,4 +1,5 @@
-# most of the code used here was from the Week 12 tutorial sheet (Task 3_1)
+""" Visualiser for the Graph implementation
+most of the code used here was from the Week 12 tutorial sheet (Task 3_1)"""
 import pygame
 import collections
 from utils import utilities

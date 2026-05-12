@@ -1,3 +1,4 @@
+"""Visualise event queue"""
 import pygame
 from utils import utilities
 from puzzles.event_queue import Event, EventQueue

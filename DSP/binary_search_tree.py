@@ -1,7 +1,5 @@
+"""BST implementation. Backend only."""
 from collections import deque
-
-"""Node and BST classes are based on code pulled from Week8"""
-#TODO: reference
 
 
 class Node:

@@ -1,0 +1,1 @@
+"""This module contains global configuration parameters, and some useful functions."""

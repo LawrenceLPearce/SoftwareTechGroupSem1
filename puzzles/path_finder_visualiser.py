@@ -85,6 +85,7 @@ def clear_clicked(selected_node: Node, graph: Graph, screen: pygame.Surface):
 def run_astar(graph: Graph, screen: pygame.Surface):
     """validate graph and perform a* search."""
     # check the route is valid
+    print(str(graph))
     if graph.start_node is None:
         utilities.pop_up_message(screen, "You must define a start Node", error=True)
         return []

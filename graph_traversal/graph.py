@@ -1,3 +1,4 @@
+"""Graph implementation."""
 from collections import deque
 
 

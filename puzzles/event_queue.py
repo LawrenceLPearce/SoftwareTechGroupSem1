@@ -1,3 +1,4 @@
+"""Extension of Heap implementation to demonstrate priority queue event management"""
 from heap_visualiser.heap import Heap
 
 

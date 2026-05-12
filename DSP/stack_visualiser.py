@@ -1,5 +1,6 @@
-# visualiser for the stack demonstration. may touch up the visuals to show the top and bottom more clearly if I have time. Tired to make it match the visuals with the menus.
-# some code taken from Task 1.3 in Week 10 tutorial sheet (mainly loops, stack blocks, event handling). removed key controls and just made it clickable buttons
+"""visualiser for the stack demonstration.
+some code taken from Task 1.3 in Week 10 tutorial sheet (mainly loops, stack blocks, event handling).
+"""
 import pygame
 from utils import utilities, config
 from DSP.stack import Stack

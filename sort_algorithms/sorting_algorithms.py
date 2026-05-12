@@ -1,4 +1,4 @@
-"""This program visualisers 3 sort algorithms: bubble, merge and selection. """
+"""This program visualises 3 sort algorithms: bubble, merge and selection. """
 import pygame
 import random
 from utils import utilities, config
@@ -101,6 +101,7 @@ def selection_sort_visualiser(array: list, screen: pygame.Surface, animation_spe
 
 
 def merge(left: list, right: list, screen: pygame.Surface, array: list, start: int, animation_speed, buttons):
+    """merge the two given lists such that they are sorted."""
     result = []
     i, j = 0, 0
 
@@ -136,6 +137,7 @@ def merge(left: list, right: list, screen: pygame.Surface, array: list, start: i
 
 
 def merge_sort_iterative(array: list, screen: pygame.Surface, animation_speed, buttons):
+    """Iterative merge sort implementation with call to visualiser."""
     n = len(array)
     size = 1
 

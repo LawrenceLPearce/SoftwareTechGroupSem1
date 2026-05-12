@@ -1,3 +1,4 @@
+"""Visulaiser for the heap implementation"""
 import pygame
 from utils import utilities
 from heap_visualiser.heap import Heap
