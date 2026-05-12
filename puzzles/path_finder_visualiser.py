@@ -1,5 +1,5 @@
 """This program contains functions to implement and run Graph, allowing users to set node states,
-make obstacle and run a* search."""
+make obstacle and run a* search, or count graph routes."""
 import random
 from typing import Dict
 
@@ -9,12 +9,7 @@ from utils import utilities, config
 
 pygame.init()
 
-INSTRUCTIONS_RECT = pygame.Rect(150, 50, 600, 25)
-
-# node calculations
-# maximise the columns based on the row count to fill rect.
-
-
+INSTRUCTIONS_RECT = pygame.Rect(150, 50, 600, 25) # global rectangle for where instructions are placed
 
 def node_clicked(graph: Graph, screen: pygame.Surface, event: pygame.event.Event, node_command):
     """set the node to the current command, if there is no command then return the Node to be highlighted"""
@@ -93,10 +88,12 @@ def run_astar(graph: Graph, screen: pygame.Surface):
     if graph.end_node is None:
         utilities.pop_up_message(screen, "You must define a end Node", error=True)
         return []
+
+    # run search
     graph.is_running = True
     path = graph.a_star_search()
 
-    if path is None:
+    if path is None:    # no path found
         utilities.pop_up_message(screen, "No valid path was found", error=True)
         return []
 
@@ -104,8 +101,18 @@ def run_astar(graph: Graph, screen: pygame.Surface):
 
     return path
 
-def count_paths(graph: Graph, description_rect):
+def count_paths(graph: Graph, screen: pygame.Surface, description_rect):
+    """count possible paths in the graph"""
+    # provide cancel button as route count can take long time
     buttons = {"Cancel": pygame.Rect((config.WIDTH -200), 100, 100, 50)}
+
+    if graph.start_node is None:
+        utilities.pop_up_message(screen, "You must define a start Node", error=True)
+        return []
+
+    if graph.end_node is None:
+        utilities.pop_up_message(screen, "You must define a end Node", error=True)
+        return []
 
     total_routes, path = graph.run_route_count(buttons=buttons,
                                                counter_rect=description_rect)
@@ -113,7 +120,19 @@ def count_paths(graph: Graph, description_rect):
     return path, f"Total routes: {total_routes}"
 
 
-def run_sort_menu(screen: pygame.Surface, clock: pygame.time.Clock, buttons:Dict, graph_size, title_text, description_text):
+def run_sort_menu(screen: pygame.Surface, clock: pygame.time.Clock, buttons:Dict, graph_size, title_text,
+                  description_text):
+    """
+    Run the menu and call functions when button pressed.
+    :param screen: pygame.Surface instance
+    :param clock: pygame.time.Clock instance
+    :param buttons: dictionary of button titles, position. Functions will be called based on button text.
+    :param graph_size: Number of rows and columns.
+    :param title_text: Text to put in heading
+    :param description_text: Text to put in Description
+    :return: None
+    """
+
     graph_max_area = pygame.Rect(50, 75, 800, 450)  # working rect defining the maximum area that the graph can occupy
 
     node_size = graph_max_area.height // graph_size  # maximise the size of each node
@@ -200,7 +219,7 @@ def run_sort_menu(screen: pygame.Surface, clock: pygame.time.Clock, buttons:Dict
                 # count command (used in counting menu)
                 case 'Count Paths':
                     utilities.draw_text_in_rect("Current Mode: \n Count", MODE_INFO_AREA, screen)
-                    found_path, description_text = count_paths(graph, INSTRUCTIONS_RECT)
+                    found_path, description_text = count_paths(graph, screen, INSTRUCTIONS_RECT)
 
 
         command = None
@@ -217,6 +236,7 @@ def run_sort_menu(screen: pygame.Surface, clock: pygame.time.Clock, buttons:Dict
         else:
             text = ""
 
+        # draw everything back on
         utilities.draw_text_in_rect(text, MODE_INFO_AREA, screen)
         utilities.draw_text_in_rect(description_text, INSTRUCTIONS_RECT, screen)
 
@@ -232,7 +252,7 @@ def run_sort_menu(screen: pygame.Surface, clock: pygame.time.Clock, buttons:Dict
 
 
 def main():
-    """Launch the graph"""
+    """Launch the graph in count path mode"""
     screen = pygame.display.set_mode((config.WIDTH, config.HEIGHT))
     clock = pygame.time.Clock()
     run_sort_menu(screen, clock, buttons = {
