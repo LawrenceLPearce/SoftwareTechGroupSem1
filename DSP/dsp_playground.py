@@ -1,7 +1,7 @@
 """This file is the launcher for all modules in phase 1."""
 
 import pygame
-from utils import utilities
+from utils import utilities, config
 from DSP import linked_list_editor, BST_visualiser, stack_visualiser, queue_visualiser
 
 
@@ -10,7 +10,7 @@ def dsp_menu(screen: pygame.Surface):
     left_lineup = screen.get_width() // 2 - 100
 
     utilities.fill_screen(screen)
-    utilities.draw_text("Data Structure Playground", (left_lineup, 50), screen)
+    utilities.draw_text("Data Structure Playground", (left_lineup - 25, 50), screen)
     buttons = {
         'Stack Interaction': pygame.Rect(left_lineup, 150, 250, 50),
         'Queue Interaction': pygame.Rect(left_lineup, 230, 250, 50),
