@@ -3,7 +3,7 @@ import pygame
 import math
 from utils.config import FONT, BACKGROUND_COLOUR, TEXT_COLOUR, ERROR_COLOUR, SECONDARY_COLOUR, SECONDARY_COLOUR_SHADOW
 
-pygame.init()
+
 
 
 def handle_events(buttons: dict, current_module: str | None):
@@ -365,7 +365,6 @@ Uses different styles if communicating error or information.
                 return
 
         draw_pop_up()
-
 
 def delay_with_exit_detection(duration, buttons=None):
     """
