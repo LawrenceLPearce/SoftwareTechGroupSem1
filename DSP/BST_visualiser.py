@@ -191,8 +191,8 @@ def run_bst_menu(screen: pygame.Surface, clock: pygame.time.Clock):
         'In-Order': pygame.Rect(546, 540, 150, 50),
     }
 
-    entry_rect = pygame.Rect(190, 150, 640, 70)
-    heading_rect = pygame.Rect(190, 250, 640, 50)
+    entry_rect = pygame.Rect(125, 150, 650, 70)
+    heading_rect = pygame.Rect(125, 250, 650, 50)
 
     current_highlight = None
 
@@ -206,8 +206,7 @@ def run_bst_menu(screen: pygame.Surface, clock: pygame.time.Clock):
         match current_module:
             case 'Insert':
                 node_value = utilities.text_entry(screen, entry_rect, heading_rect, integer_only=True)
-                node_value = insert_node(bst, node_value, screen)
-                current_highlight = bst.search(node_value)[1][-1]
+                current_highlight = insert_node(bst, node_value, screen)
 
             case 'Delete':
                 node_value = utilities.text_entry(screen, entry_rect, heading_rect, integer_only=True)
