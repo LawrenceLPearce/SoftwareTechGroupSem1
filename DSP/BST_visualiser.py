@@ -3,9 +3,6 @@ from DSP.binary_search_tree import BST
 import pygame
 from utils import utilities, config
 
-###
-
-
 LEVEL_GAP = 80  # vertical gap between nodes
 
 TREE_RECT = pygame.Rect(0, 50, 900, 400)  # rect defining the space the bst can occupy
