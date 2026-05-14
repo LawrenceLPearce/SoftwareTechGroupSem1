@@ -217,7 +217,7 @@ def run_sort_menu(screen: pygame.Surface, clock: pygame.time.Clock, buttons:Dict
 
                 # count command (used in counting menu)
                 case 'Count Paths':
-                    utilities.draw_text_in_rect("Current Mode: \n Count", MODE_INFO_AREA, screen)
+                    utilities.draw_text_in_rect("Current Mode: \n Count", MODE_INFO_AREA, screen, clear=True)
                     found_path, description_text = count_paths(graph, screen, INSTRUCTIONS_RECT)
 
 
